@@ -24,7 +24,7 @@ def main():
         print(d + " " + "GIN " + str(acc) + " " + str(s_1) + " " + str(s_2))
         results.append(d + " " + "GIN " + str(acc) + " " + str(s_1) + " " + str(s_2))
 
-    # Larger datasets with edge labels..
+    # Larger datasets with edge labels.
     dataset = [["Yeast", True], ["YeastH", True], ["UACC257", True], ["UACC257H", True], ["OVCAR-8", True],
                ["OVCAR-8H", True]]
 
