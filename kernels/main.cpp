@@ -462,7 +462,7 @@ int main() {
             vector<int> classes = AuxiliaryMethods::read_classes(ds);
 
             GenerateTwo::GenerateTwo wl(gdb);
-            for (uint i = 0; i <= 3; ++i) {
+            for (uint i = 0; i <= 5; ++i) {
                 cout << i << endl;
                 cout << ds + "__" + kernel + "_" + to_string(i) << endl;
                 GramMatrix gm;

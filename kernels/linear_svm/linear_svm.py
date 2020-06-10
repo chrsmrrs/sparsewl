@@ -27,7 +27,7 @@ def main():
             all_feature_matrices = []
             classes = read_classes(name)
             classes = np.array(classes)
-            for i in range(0, 5):
+            for i in range(0, 6):
                 # Load feature matrices.
                 feature_vector = pd.read_csv(path + name + "__" + algorithm + "_" + str(i), header=1,
                                              delimiter=" ").to_numpy()
@@ -47,36 +47,41 @@ def main():
                 all_feature_matrices.append(feature_vector)
             print("### Data loading done.")
 
-            kf = KFold(n_splits=10, shuffle=True)
-            test_accuracies = []
-            for train_index, test_index in kf.split(list(range(len(classes)))):
-                best_f = None
-                best_m = None
-                best_val = 0.0
-                for f in all_feature_matrices:
-                    train_index, val_index = train_test_split(train_index, test_size=0.1)
-                    train = f[train_index]
-                    val = f[val_index]
-                    c_train = classes[train_index]
-                    c_val = classes[val_index]
-                    for c in [10 ** 3, 10 ** 2, 10 ** 1, 10 ** 0, 10 ** -1, 10 ** -2, 10 ** -3]:
-                        clf = LinearSVC(C=c)
-                        clf.fit(train, c_train)
-                        p = clf.predict(val)
-                        a = np.sum(np.equal(p, c_val)) / val.shape[0]
+            test_accuracies_all = []
+            for _ in range(10):
 
-                        if a > best_val:
-                            best_val = a
-                            best_f = f
-                            best_m = clf
+                kf = KFold(n_splits=10, shuffle=True)
+                test_accuracies = []
+                for train_index, test_index in kf.split(list(range(len(classes)))):
+                    best_f = None
+                    best_m = None
+                    best_val = 0.0
+                    for f in all_feature_matrices:
+                        train_index, val_index = train_test_split(train_index, test_size=0.1)
+                        train = f[train_index]
+                        val = f[val_index]
+                        c_train = classes[train_index]
+                        c_val = classes[val_index]
+                        for c in [10 ** 3, 10 ** 2, 10 ** 1, 10 ** 0, 10 ** -1, 10 ** -2, 10 ** -3]:
+                            clf = LinearSVC(C=c)
+                            clf.fit(train, c_train)
+                            p = clf.predict(val)
+                            a = np.sum(np.equal(p, c_val)) / val.shape[0]
 
-                test = best_f[test_index]
-                c_test = classes[test_index]
-                p = best_m.predict(test)
-                a = np.sum(np.equal(p, c_test)) / test.shape[0]
-                test_accuracies.append(a * 100.0)
+                            if a > best_val:
+                                best_val = a
+                                best_f = f
+                                best_m = clf
 
-            print(np.mean(test_accuracies), np.std(test_accuracies))
+                    test = best_f[test_index]
+                    c_test = classes[test_index]
+                    p = best_m.predict(test)
+                    a = np.sum(np.equal(p, c_test)) / test.shape[0]
+                    test_accuracies.append(a * 100.0)
+
+                test_accuracies_all.append(np.mean(test_accuracies))
+
+            print(np.mean(test_accuracies_all), np.std(test_accuracies_all))
 
 if __name__ == "__main__":
     main()
