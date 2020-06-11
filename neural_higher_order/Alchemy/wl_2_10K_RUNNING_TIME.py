@@ -276,7 +276,7 @@ for epoch in range(1, 201):
     if lr < 0.000001:
         print("Converged.")
         break
-        
+
 torch.cuda.synchronize()
 stop = timer()
 delta = stop - start
