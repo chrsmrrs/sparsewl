@@ -336,8 +336,7 @@ results_log = []
 for _ in range(5):
     path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', '1t-QdM9')
 
-    # TODO
-    # dataset = QM9(path, transform=T.Compose([Complete(), T.Distance(norm=False)]))
+
     dataset = QM9(path)
 
     dataset.data.y = dataset.data.y[:, 0:12]
@@ -374,13 +373,11 @@ for _ in range(5):
         lf = torch.nn.L1Loss()
         error = torch.zeros([1, 12]).to(device)
 
-        # tt = tqdm(train_loader, total=len(train_loader), desc="Epoch-{}-".format(epoch))
         c = 0
         for data in train_loader:
             _, y = data
             y = y.to(device)
 
-            # data = data.to(device)
             optimizer.zero_grad()
             out = model(data)
             loss = lf(out, y)
@@ -394,7 +391,6 @@ for _ in range(5):
                 error += ((y * std - out * std).abs() / std).sum(dim=0)
         error = error / c
 
-        # tt.close()
         return loss_all / c, error.mean().item()
 
 
@@ -404,19 +400,14 @@ for _ in range(5):
         error = torch.zeros([1, 12]).to(device)
 
         c = 0
-        # tt = tqdm(loader, total=len(loader), desc="Val  -{}-".format(epoch))
         for data in loader:
             _, y = data
-            # y = y.to(device)
-
             c += y.size(0)
-
             error += ((y * std - model(data) * std).abs() / std).sum(dim=0)
 
         error = error / c
         error_log = torch.log(error)
 
-        # tt.close()
 
         return error.mean().item(), error_log.mean().item()
 
@@ -424,7 +415,7 @@ for _ in range(5):
     best_val_error = None
     test_error = None
     test_error_log = None
-    for epoch in range(1, 301):
+    for epoch in range(1, 1001):
         lr = scheduler.optimizer.param_groups[0]['lr']
         loss, train_error = train()
         val_error, _ = test(val_loader)
