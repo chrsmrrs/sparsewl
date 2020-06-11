@@ -62,6 +62,7 @@ class ZINC_wl_1(InMemoryDataset):
             data.edge_index_1 = edge_index_1
             data.edge_index_2 = edge_index_2
 
+            # one_hot = np.eye(492)[node_labels[i]]
             data.x = torch.from_numpy(np.array(node_labels_1[i])).to(torch.float)
             data.y = data.y = torch.from_numpy(np.array([targets_1[i]])).to(torch.float)
 
@@ -168,6 +169,7 @@ class ZINC_wl_3(InMemoryDataset):
             data.edge_index_1 = edge_index_1
             data.edge_index_2 = edge_index_2
 
+            # one_hot = np.eye(492)[node_labels[i]]
             data.x = torch.from_numpy(np.array(node_labels_1[i])).to(torch.float)
             data.y = data.y = torch.from_numpy(np.array([targets_1[i]])).to(torch.float)
 
@@ -221,6 +223,7 @@ class ZINC_wl_4(InMemoryDataset):
             data.edge_index_1 = edge_index_1
             data.edge_index_2 = edge_index_2
 
+            # one_hot = np.eye(492)[node_labels[i]]
             data.x = torch.from_numpy(np.array(node_labels_1[i])).to(torch.float)
             data.y = data.y = torch.from_numpy(np.array([targets_1[i]])).to(torch.float)
 
@@ -342,6 +345,8 @@ class ZINC_wl_val(InMemoryDataset):
     def process(self):
         data_list = []
 
+        indices_val = list(range(225011, 249456))
+
         dp.get_dataset("ZINC_val", regression=True)
         node_labels = pre.get_all_node_labels("ZINC_full", True, True)
         targets = pre.read_targets("ZINC_val", list(range(0, 24445)))
@@ -388,6 +393,7 @@ class ZINC_wl_test(InMemoryDataset):
 
         dp.get_dataset("ZINC_test", regression=True)
 
+        # TODO Change this
         node_labels = pre.get_all_node_labels("ZINC_full", True, True)
         targets = pre.read_targets("ZINC_test", list(range(0, 5000)))
 
@@ -402,6 +408,7 @@ class ZINC_wl_test(InMemoryDataset):
             data.edge_index_1 = edge_index_1
             data.edge_index_2 = edge_index_2
 
+            # one_hot = np.eye(492)[node_labels[i]]
             data.x = torch.from_numpy(np.array(node_labels_1[i])).to(torch.float)
             data.y = data.y = torch.from_numpy(np.array([targets_1[i]])).to(torch.float)
 
@@ -526,6 +533,7 @@ for _ in range(5):
                                                            factor=0.5, patience=5,
                                                            min_lr=0.0000001)
 
+
     def train():
         model.train()
         loss_all = 0
@@ -551,6 +559,7 @@ for _ in range(5):
             data = data.to(device)
             error += (model(data) - data.y).abs().sum().item()  # MAE
         return error / len(loader.dataset)
+
 
     best_val_error = None
     test_error = None
