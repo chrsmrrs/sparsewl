@@ -25,11 +25,11 @@ class ZINC(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        return "zink10k"
+        return "zinc50k"
 
     @property
     def processed_file_names(self):
-        return "zink10k"
+        return "zinc50k"
 
     def download(self):
         pass
@@ -39,26 +39,22 @@ class ZINC(InMemoryDataset):
 
         indices_train = []
         indices_val = []
-        indices_test = []
 
-        infile = open("test.index.txt", "r")
-        for line in infile:
-            indices_test = line.split(",")
-            indices_test = [int(i) for i in indices_test]
-
-        infile = open("val.index.txt", "r")
-        for line in infile:
-            indices_val = line.split(",")
-            indices_val = [int(i) for i in indices_val]
-
-        infile = open("train.index.txt", "r")
+        infile = open("train_50.index.txt", "r")
         for line in infile:
             indices_train = line.split(",")
             indices_train = [int(i) for i in indices_train]
 
-        dp.get_dataset("ZINC_train")
-        dp.get_dataset("ZINC_test")
-        dp.get_dataset("ZINC_val")
+        infile = open("val_50.index.txt", "r")
+        for line in infile:
+            indices_val = line.split(",")
+            indices_val = [int(i) for i in indices_val]
+
+        indices_test = list(range(0, 5000))
+
+        dp.get_dataset("ZINC_train", regression=True)
+        dp.get_dataset("ZINC_test", regression=True)
+        dp.get_dataset("ZINC_val", regression=True)
         node_labels = pre.get_all_node_labels_ZINC(True, True, indices_train, indices_val, indices_test)
 
         targets = pre.read_targets("ZINC_train", indices_train)
@@ -77,8 +73,7 @@ class ZINC(InMemoryDataset):
             data.edge_index_1 = edge_index_1
             data.edge_index_2 = edge_index_2
 
-            one_hot = np.eye(445)[node_labels[i]]
-            data.x = torch.from_numpy(one_hot).to(torch.float)
+            data.x = torch.from_numpy(np.array(node_labels[i])).to(torch.float)
             data.y = data.y = torch.from_numpy(np.array([targets[i]])).to(torch.float)
 
             data_list.append(data)
@@ -106,7 +101,7 @@ class NetGIN(torch.nn.Module):
     def __init__(self, dim):
         super(NetGIN, self).__init__()
 
-        num_features = 445
+        num_features = 492
 
         nn1_1 = Sequential(Linear(num_features, dim), ReLU(), Linear(dim, dim))
         nn1_2 = Sequential(Linear(num_features, dim), ReLU(), Linear(dim, dim))
@@ -143,9 +138,13 @@ class NetGIN(torch.nn.Module):
 
     def forward(self, data):
         x = data.x
+        x = x.long()
 
-        x_1 = F.relu(self.conv1_1(x, data.edge_index_1))
-        x_2 = F.relu(self.conv1_2(x, data.edge_index_2))
+        x_new = torch.zeros(x.size(0), 492).to(device)
+        x_new[range(x_new.shape[0]), x.view(1, x.size(0))] = 1
+
+        x_1 = F.relu(self.conv1_1(x_new, data.edge_index_1))
+        x_2 = F.relu(self.conv1_2(x_new, data.edge_index_2))
         x_1_r = self.mlp_1(torch.cat([x_1, x_2], dim=-1))
         x_1_r = self.bn1(x_1_r)
 
@@ -176,13 +175,10 @@ class NetGIN(torch.nn.Module):
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '.', 'data', 'ZINC')
 dataset = ZINC(path, transform=MyTransform())
-print(len(dataset))
 
-print("###")
-
-train_dataset = dataset[0:10000].shuffle()
-val_dataset = dataset[10000:11000].shuffle()
-test_dataset = dataset[11000:].shuffle()
+train_dataset = dataset[0:50000].shuffle()
+test_dataset = dataset[50000:55000].shuffle()
+val_dataset = dataset[55000:].shuffle()
 
 batch_size = 25
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
@@ -227,7 +223,7 @@ for _ in range(5):
 
 
     best_val_error = None
-    for epoch in range(1, 201):
+    for epoch in range(1, 501):
         lr = scheduler.optimizer.param_groups[0]['lr']
         loss = train()
         val_error = test(val_loader)
