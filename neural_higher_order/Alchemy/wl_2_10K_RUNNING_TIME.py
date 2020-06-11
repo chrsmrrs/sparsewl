@@ -1,39 +1,34 @@
-from __future__ import division
-
 import sys
 
-import auxiliarymethods.datasets as dp
-import kernel_baselines as kb
-
 sys.path.insert(0, '..')
-sys.path.insert(0, '../..')
 sys.path.insert(0, '.')
+
+import auxiliarymethods.datasets as dp
+import preprocessing as pre
 
 import os.path as osp
 import numpy as np
 import torch
 from torch.nn import Sequential, Linear, ReLU
 from torch_geometric.nn import GINConv, Set2Set
-
-from torch_geometric.data import (InMemoryDataset, Data)
-from torch_geometric.data import DataLoader
+from torch_geometric.data import InMemoryDataset, Data, DataLoader
 import torch.nn.functional as F
 from timeit import default_timer as timer
 
 
-class ZINC_wl(InMemoryDataset):
+class Alchemy_wl(InMemoryDataset):
     def __init__(self, root, transform=None, pre_transform=None,
                  pre_filter=None):
-        super(ZINC_wl, self).__init__(root, transform, pre_transform, pre_filter)
+        super(Alchemy_wl, self).__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self):
-        return "ZINC_gwsddffdffl"
+        return "alchemywl10"
 
     @property
     def processed_file_names(self):
-        return "ZINC_wfgdlffddffss"
+        return "alchemywl10"
 
     def download(self):
         pass
@@ -45,43 +40,36 @@ class ZINC_wl(InMemoryDataset):
         indices_val = []
         indices_test = []
 
-        infile = open("data/test_al_10.index", "r")
+        infile = open("test_al_10.index", "r")
         for line in infile:
             indices_test = line.split(",")
             indices_test = [int(i) for i in indices_test]
 
-        infile = open("data/val_al_10.index", "r")
+        infile = open("val_al_10.index", "r")
         for line in infile:
             indices_val = line.split(",")
             indices_val = [int(i) for i in indices_val]
 
-        infile = open("data/train_al_10.index", "r")
+        infile = open("train_al_10.index", "r")
         for line in infile:
             indices_train = line.split(",")
             indices_train = [int(i) for i in indices_train]
 
-        print("###")
-
         targets = dp.get_dataset("alchemy_full", multigregression=True)
-        tmp1 = targets[indices_train].tolist()
-        tmp2 = targets[indices_val].tolist()
-        tmp3 = targets[indices_test].tolist()
-        targets = tmp1
-        targets.extend(tmp2)
-        targets.extend(tmp3)
+        tmp_1 = targets[indices_train].tolist()
+        tmp_2 = targets[indices_val].tolist()
+        tmp_3 = targets[indices_test].tolist()
+        targets = tmp_1
+        targets.extend(tmp_2)
+        targets.extend(tmp_3)
 
-        print("###")
-        node_labels = kb.get_all_node_labels_allchem(True, True, indices_train, indices_val, indices_test)
+        node_labels = pre.get_all_node_labels_allchem(True, True, indices_train, indices_val, indices_test)
 
-        print("###")
-        matrices = kb.get_all_matrices_wl("alchemy_full", indices_train)
-        matrices.extend(kb.get_all_matrices_wl("alchemy_full", indices_val))
-        matrices.extend(kb.get_all_matrices_wl("alchemy_full", indices_test))
-
-        print(len(matrices))
+        matrices = pre.get_all_matrices_wl("alchemy_full", indices_train)
+        matrices.extend(pre.get_all_matrices_wl("alchemy_full", indices_val))
+        matrices.extend(pre.get_all_matrices_wl("alchemy_full", indices_test))
 
         for i, m in enumerate(matrices):
-            print(i)
             edge_index_1 = torch.tensor(matrices[i][0]).t().contiguous()
             edge_index_2 = torch.tensor(matrices[i][1]).t().contiguous()
 
@@ -215,9 +203,8 @@ class NetGIN(torch.nn.Module):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-path = osp.join(osp.dirname(osp.realpath(__file__)), '.', 'data', 'ZINC')
-dataset = ZINC_wl(path, transform=MyTransform())
-print(len(dataset))
+path = osp.join(osp.dirname(osp.realpath(__file__)), '.', 'data', 'Alchemy_wl')
+dataset = Alchemy_wl(path, transform=MyTransform())
 
 mean = dataset.data.y.mean(dim=0, keepdim=True)
 std = dataset.data.y.std(dim=0, keepdim=True)
@@ -289,6 +276,7 @@ for epoch in range(1, 201):
     if lr < 0.000001:
         print("Converged.")
         break
+        
 torch.cuda.synchronize()
 stop = timer()
 delta = stop - start
