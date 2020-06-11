@@ -1,38 +1,35 @@
-from __future__ import division
-
 import sys
 
-import auxiliarymethods.datasets as dp
-import kernel_baselines as kb
-
 sys.path.insert(0, '..')
-sys.path.insert(0, '../..')
 sys.path.insert(0, '.')
+
+import auxiliarymethods.datasets as dp
+import preprocessing as pre
 
 import os.path as osp
 import numpy as np
 import torch
 from torch.nn import Sequential, Linear, ReLU
-from torch_geometric.nn import global_mean_pool, GINConv, Set2Set
-
-from torch_geometric.data import (InMemoryDataset, Data)
-from torch_geometric.data import DataLoader
+from torch_geometric.nn import GINConv, Set2Set
+from torch_geometric.data import InMemoryDataset, Data, DataLoader
 import torch.nn.functional as F
 
+import pickle
 
-class ZINC_wl(InMemoryDataset):
+
+class ZINC(InMemoryDataset):
     def __init__(self, root, transform=None, pre_transform=None,
                  pre_filter=None):
-        super(ZINC_wl, self).__init__(root, transform, pre_transform, pre_filter)
+        super(ZINC, self).__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self):
-        return "ZINC_ccgwsfdddffl"
+        return "alchemyfull"
 
     @property
     def processed_file_names(self):
-        return "ZINC_wccfgdlddfffss"
+        return "alchemyfull"
 
     def download(self):
         pass
@@ -40,47 +37,11 @@ class ZINC_wl(InMemoryDataset):
     def process(self):
         data_list = []
 
-        indices_train = []
-        indices_val = []
-        indices_test = []
-
-        infile = open("data/test_al_50.index", "r")
-        for line in infile:
-            indices_test = line.split(",")
-            indices_test = [int(i) for i in indices_test]
-
-        infile = open("data/val_al_50.index", "r")
-        for line in infile:
-            indices_val = line.split(",")
-            indices_val = [int(i) for i in indices_val]
-
-        infile = open("data/train_al_50.index", "r")
-        for line in infile:
-            indices_train = line.split(",")
-            indices_train = [int(i) for i in indices_train]
-
-        print("###")
-
-        targets = dp.get_dataset("alchemy_full", multigregression=True)
-        tmp1 = targets[indices_train].tolist()
-        tmp2 = targets[indices_val].tolist()
-        tmp3 = targets[indices_test].tolist()
-        targets = tmp1
-        targets.extend(tmp2)
-        targets.extend(tmp3)
-
-        print("###")
-        node_labels = kb.get_all_node_labels_allchem(True, True, indices_train, indices_val, indices_test)
-
-        print("###")
-        matrices = kb.get_all_matrices_wl("alchemy_full", indices_train)
-        matrices.extend(kb.get_all_matrices_wl("alchemy_full", indices_val))
-        matrices.extend(kb.get_all_matrices_wl("alchemy_full", indices_test))
-
-        print(len(matrices))
+        targets = dp.get_dataset("alchemy_full", multigregression=True).tolist()
+        node_labels = pre.get_all_node_labels("alchemy_full", True, True)
+        matrices = pre.get_all_matrices("alchemy_full", list(range(202579)))
 
         for i, m in enumerate(matrices):
-            print(i)
             edge_index_1 = torch.tensor(matrices[i][0]).t().contiguous()
             edge_index_2 = torch.tensor(matrices[i][1]).t().contiguous()
 
@@ -172,7 +133,6 @@ class NetGIN(torch.nn.Module):
         self.conv6_2 = GINConv(nn6_2, train_eps=True)
         self.mlp_6 = Sequential(Linear(2 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                                 torch.nn.BatchNorm1d(dim), ReLU())
-
         self.set2set = Set2Set(1 * dim, processing_steps=6)
         self.fc1 = Linear(2 * dim, dim)
         self.fc4 = Linear(dim, 12)
@@ -213,36 +173,36 @@ class NetGIN(torch.nn.Module):
         return x
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-path = osp.join(osp.dirname(osp.realpath(__file__)), '.', 'data', 'ZINC')
-dataset = ZINC_wl(path, transform=MyTransform())
-print(len(dataset))
-
-mean = dataset.data.y.mean(dim=0, keepdim=True)
-std = dataset.data.y.std(dim=0, keepdim=True)
-dataset.data.y = (dataset.data.y - mean) / std
-mean, std = mean.to(device), std.to(device)
-
-train_dataset = dataset[0:50000].shuffle()
-val_dataset = dataset[50000:55000].shuffle()
-test_dataset = dataset[55000:60000].shuffle()
-
-batch_size = 64
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
-
-
+plot_all = []
 results = []
 results_log = []
 for _ in range(5):
-
+    plot_it = []
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    path = osp.join(osp.dirname(osp.realpath(__file__)), '.', 'data', 'ZINC')
+    dataset = ZINC(path, transform=MyTransform()).shuffle()
+    print(len(dataset))
+
+    mean = dataset.data.y.mean(dim=0, keepdim=True)
+    std = dataset.data.y.std(dim=0, keepdim=True)
+    dataset.data.y = (dataset.data.y - mean) / std
+    mean, std = mean.to(device), std.to(device)
+
+    train_dataset = dataset[0:162063].shuffle()
+    val_dataset = dataset[162063:182321].shuffle()
+    test_dataset = dataset[182321:].shuffle()
+
+    batch_size = 64
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+
     model = NetGIN(64).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
                                                            factor=0.5, patience=5,
                                                            min_lr=0.0000001)
+
 
     def train():
         model.train()
@@ -276,27 +236,29 @@ for _ in range(5):
         error = error / len(loader.dataset)
         error_log = torch.log(error)
 
-        return  error.mean().item(), error_log.mean().item()
+        return error.mean().item(), error_log.mean().item()
 
 
     best_val_error = None
     test_error = None
     test_error_log = None
-    for epoch in range(1, 501):
+    for epoch in range(1, 1001):
         lr = scheduler.optimizer.param_groups[0]['lr']
-        loss, _ = train()
+        loss, train_error = train()
         val_error, _ = test(val_loader)
-
         scheduler.step(val_error)
+
         if best_val_error is None or val_error <= best_val_error:
             test_error, test_error_log = test(test_loader)
             best_val_error = val_error
 
+        plot_it.append([train_error, val_error, test_error])
         print('Epoch: {:03d}, LR: {:.7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '
               'Test MAE: {:.7f}'.format(epoch, lr, loss, val_error, test_error))
 
         if lr < 0.000001:
             print("Converged.")
+            plot_all.append(plot_it)
             break
 
     results.append(test_error)
@@ -310,3 +272,6 @@ print(results.mean(), results.std())
 print(results_log)
 results_log = np.array(results_log)
 print(results_log.mean(), results_log.std())
+
+with open('plot_alchem_2_all', 'wb') as fp:
+    pickle.dump(plot_all, fp)

@@ -1,46 +1,38 @@
-from __future__ import division
-
 import sys
 
-import auxiliarymethods.datasets as dp
-import kernel_baselines as kb
-
 sys.path.insert(0, '..')
-sys.path.insert(0, '../..')
 sys.path.insert(0, '.')
+
+import auxiliarymethods.datasets as dp
+import preprocessing as pre
 
 import os.path as osp
 import numpy as np
-import torch
 from torch.nn import Linear as Lin
 from torch.nn import Sequential, Linear, ReLU
-from torch_geometric.nn import global_mean_pool, Set2Set
+from torch_geometric.nn import Set2Set
 
 from torch_geometric.data import (InMemoryDataset, Data)
 from torch_geometric.data import DataLoader
-import torch.nn.functional as F
 
 import torch
 from torch_geometric.nn import MessagePassing
 import torch.nn.functional as F
-from torch_geometric.nn import global_mean_pool, global_add_pool
-from ogb.graphproppred.mol_encoder import AtomEncoder, BondEncoder
-from torch_geometric.utils import degree
 
 
-class ZINCbase(InMemoryDataset):
+class Alchemy_gnn(InMemoryDataset):
     def __init__(self, root, transform=None, pre_transform=None,
                  pre_filter=None):
-        super(ZINCbase, self).__init__(root, transform, pre_transform, pre_filter)
+        super(Alchemy_gnn, self).__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self):
-        return "ZIfNC_alggfrdfffdvvvvlrfsvfsd0kdd"
+        return "alchemygnn10"
 
     @property
     def processed_file_names(self):
-        return "ZINfC_adfgsdffflrflfvrdccf1s0kdd"
+        return "alchemygnn10"
 
     def download(self):
         pass
@@ -52,22 +44,21 @@ class ZINCbase(InMemoryDataset):
         indices_val = []
         indices_test = []
 
-        infile = open("data/test_al_10.index", "r")
+        infile = open("test_al_50.index", "r")
         for line in infile:
             indices_test = line.split(",")
             indices_test = [int(i) for i in indices_test]
 
-        infile = open("data/val_al_10.index", "r")
+        infile = open("val_al_50.index", "r")
         for line in infile:
             indices_val = line.split(",")
             indices_val = [int(i) for i in indices_val]
 
-        infile = open("data/train_al_10.index", "r")
+        infile = open("train_al_50.index", "r")
         for line in infile:
             indices_train = line.split(",")
             indices_train = [int(i) for i in indices_train]
 
-        print("###")
 
         targets = dp.get_dataset("alchemy_full", multigregression=True)
         tmp1 = targets[indices_train].tolist()
@@ -77,18 +68,14 @@ class ZINCbase(InMemoryDataset):
         targets.extend(tmp2)
         targets.extend(tmp3)
 
-        node_labels = kb.get_all_node_labels_alchem_1(True, True, indices_train, indices_val, indices_test)
-        edge_labels = kb.get_all_edge_labels_alchem_1(True, True, indices_train, indices_val, indices_test)
+        node_labels = pre.get_all_node_labels_alchem_1(True, True, indices_train, indices_val, indices_test)
+        edge_labels = pre.get_all_edge_labels_alchem_1(True, True, indices_train, indices_val, indices_test)
 
-        print("###")
-        matrices = kb.get_all_matrices_1("alchemy_full", indices_train)
-        matrices.extend(kb.get_all_matrices_1("alchemy_full", indices_val))
-        matrices.extend(kb.get_all_matrices_1("alchemy_full", indices_test))
-        print(len(matrices))
+        matrices = pre.get_all_matrices_1("alchemy_full", indices_train)
+        matrices.extend(pre.get_all_matrices_1("alchemy_full", indices_val))
+        matrices.extend(pre.get_all_matrices_1("alchemy_full", indices_test))
 
         for i, m in enumerate(matrices):
-            print(i)
-
             data = Data()
             data.edge_index = torch.tensor(matrices[i]).t().contiguous()
 
@@ -98,8 +85,10 @@ class ZINCbase(InMemoryDataset):
             one_hot = np.eye(4)[edge_labels[i]]
             data.edge_attr = torch.from_numpy(one_hot).to(torch.float)
 
+
             data.y = torch.from_numpy(np.array([targets[i]])).to(torch.float)
             print(data.y.size())
+
             data_list.append(data)
 
         data, slices = self.collate(data_list)
@@ -125,53 +114,8 @@ class GINConv(MessagePassing):
     def __init__(self, emb_dim, dim1, dim2):
         super(GINConv, self).__init__(aggr="add")
 
-        # TODO Batchnorm?
-
         self.bond_encoder = Sequential(Linear(emb_dim, dim1), ReLU(), Linear(dim1, dim1))
-        # self.bond_encoder = torch.nn.Sequential(torch.nn.Linear(emb_dim, 2 * emb_dim), torch.nn.BatchNorm1d(2 * emb_dim),
-        #                               torch.nn.ReLU(), torch.nn.Linear(2 * emb_dim, dim1))
-
         self.mlp = Sequential(Linear(dim1, dim1), ReLU(), Linear(dim1, dim2))
-        # self.mlp = torch.nn.Sequential(torch.nn.Linear(dim1, 2 * dim1), torch.nn.BatchNorm1d(2 * dim1),
-        #                               torch.nn.ReLU(), torch.nn.Linear(2 * dim1, dim2))
-
-        # TODO Bondencoder
-        # self.bond_encoder = BondEncoder(emb_dim=emb_dim)
-
-        self.eps = torch.nn.Parameter(torch.Tensor([0]))
-
-    def forward(self, x, edge_index, edge_attr):
-        edge_embedding = self.bond_encoder(edge_attr)
-
-        out = self.mlp((1 + self.eps) * x + self.propagate(edge_index, x=x, edge_attr=edge_embedding))
-
-        return out
-
-    def message(self, x_j, edge_attr):
-        return F.relu(x_j + edge_attr)
-
-    def update(self, aggr_out):
-        return aggr_out
-
-
-class GINConv(MessagePassing):
-    def __init__(self, emb_dim, dim1, dim2):
-        super(GINConv, self).__init__(aggr="add")
-
-        # TODO Batchnorm?
-
-        self.bond_encoder = Sequential(Linear(emb_dim, dim1), torch.nn.BatchNorm1d(dim1), ReLU(), Linear(dim1, dim1),
-                                       torch.nn.BatchNorm1d(dim1), ReLU())
-        # self.bond_encoder = torch.nn.Sequential(torch.nn.Linear(emb_dim, 2 * emb_dim), torch.nn.BatchNorm1d(2 * emb_dim),
-        #                               torch.nn.ReLU(), torch.nn.Linear(2 * emb_dim, dim1))
-
-        self.mlp = Sequential(Linear(dim1, dim2), torch.nn.BatchNorm1d(dim2), ReLU(), Linear(dim2, dim2),
-                              torch.nn.BatchNorm1d(dim2), ReLU())
-        # self.mlp = torch.nn.Sequential(torch.nn.Linear(dim1, 2 * dim1), torch.nn.BatchNorm1d(2 * dim1),
-        #                               torch.nn.ReLU(), torch.nn.Linear(2 * dim1, dim2))
-
-        # TODO Bondencoder
-        # self.bond_encoder = BondEncoder(emb_dim=emb_dim)
 
         self.eps = torch.nn.Parameter(torch.Tensor([0]))
 
@@ -197,22 +141,11 @@ class NetGINE(torch.nn.Module):
         dim = dim
 
         self.conv1 = GINConv(4, num_features, dim)
-        # self.bn1 = torch.nn.BatchNorm1d(dim)
-
         self.conv2 = GINConv(4, dim, dim)
-        # self.bn2 = torch.nn.BatchNorm1d(dim)
-
         self.conv3 = GINConv(4, dim, dim)
-        # self.bn3 = torch.nn.BatchNorm1d(dim)
-
         self.conv4 = GINConv(4, dim, dim)
-        # self.bn4 = torch.nn.BatchNorm1d(dim)
-
         self.conv5 = GINConv(4, dim, dim)
-        # self.bn3 = torch.nn.BatchNorm1d(dim)
-
         self.conv6 = GINConv(4, dim, dim)
-        # self.bn4 = torch.nn.BatchNorm1d(dim)
 
         self.set2set = Set2Set(1 * dim, processing_steps=6)
 
@@ -223,62 +156,30 @@ class NetGINE(torch.nn.Module):
         x = data.x
 
         x_1 = F.relu(self.conv1(x, data.edge_index, data.edge_attr))
-        # x_1 = self.bn1(x_1)
-
         x_2 = F.relu(self.conv2(x_1, data.edge_index, data.edge_attr))
-        # x_2 = self.bn2(x_2)
         x_3 = F.relu(self.conv3(x_2, data.edge_index, data.edge_attr))
-        # x_3 = self.bn3(x_3)
         x_4 = F.relu(self.conv4(x_3, data.edge_index, data.edge_attr))
         x_5 = F.relu(self.conv5(x_4, data.edge_index, data.edge_attr))
         x_6 = F.relu(self.conv6(x_5, data.edge_index, data.edge_attr))
-        # x_4 = self.bn4(x_4)
-
-        # x = torch.cat([x_1, x_2, x_3, x_4], dim=-1)
         x = x_6
-
         x = self.set2set(x, data.batch)
-
         x = F.relu(self.fc1(x))
-        # # x = F.dropout(x, p=0.5, training=self.training)
-        # x = F.relu(self.fc2(x))
-        # # x = F.dropout(x, p=0.5, training=self.training)
-        # x = F.relu(self.fc3(x))
-        # # x = F.dropout(x, p=0.5, training=self.training)
         x = self.fc4(x)
         return x
 
 
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-path = osp.join(osp.dirname(osp.realpath(__file__)), '.', 'data', 'ZINC')
-dataset = ZINCbase(path, transform=MyTransform())
-print(len(dataset))
-
+path = osp.join(osp.dirname(osp.realpath(__file__)), '.', 'data', 'Alchemy_gnn')
+dataset = Alchemy_gnn(path, transform=MyTransform())
 mean = dataset.data.y.mean(dim=0, keepdim=True)
-
 std = dataset.data.y.std(dim=0, keepdim=True)
 dataset.data.y = (dataset.data.y - mean) / std
 mean, std = mean.to(device), std.to(device)
 
-print("###")
-
-train_dataset = dataset[0:10000].shuffle()
-# mean = train_dataset.data.y.mean(dim=0, keepdim=True)
-# std = train_dataset.data.y.std(dim=0, keepdim=True)
-# train_dataset.data.y = (train_dataset.data.y - mean) / std
-
-val_dataset = dataset[10000:11000].shuffle()
-# mean = val_dataset.data.y.mean(dim=0, keepdim=True)
-# std = val_dataset.data.y.std(dim=0, keepdim=True)
-# val_dataset.data.y = (val_dataset.data.y - mean) / std
-
-test_dataset = dataset[11000:12000].shuffle()
-# mean = test_dataset.data.y.mean(dim=0, keepdim=True)
-# std = test_dataset.data.y.std(dim=0, keepdim=True)
-# test_dataset.data.y = (test_dataset.data.y - mean) / std
-
-
-print(len(train_dataset), len(val_dataset), len(test_dataset))
+train_dataset = dataset[0:50000].shuffle()
+val_dataset = dataset[50000:55000].shuffle()
+test_dataset = dataset[55000:60000].shuffle()
 
 batch_size = 64
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
@@ -295,8 +196,7 @@ for _ in range(5):
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
                                                            factor=0.5, patience=5,
                                                            min_lr=0.0000001)
-
-
+    #
     def train():
         model.train()
         loss_all = 0
@@ -314,7 +214,6 @@ for _ in range(5):
 
 
     def test(loader):
-        # TODO: test
         model.eval()
         error = torch.zeros([1, 12]).to(device)
 
@@ -329,7 +228,7 @@ for _ in range(5):
 
 
     best_val_error = None
-    for epoch in range(1, 201):
+    for epoch in range(1, 501):
         lr = scheduler.optimizer.param_groups[0]['lr']
         loss = train()
         val_error, _ = test(val_loader)
@@ -349,7 +248,7 @@ for _ in range(5):
     results.append(test_error)
     results_log.append(test_error_log)
 
-print("###########g#############")
+print("########################")
 print(results)
 results = np.array(results)
 print(results.mean(), results.std())
@@ -357,3 +256,4 @@ print(results.mean(), results.std())
 print(results_log)
 results_log = np.array(results_log)
 print(results_log.mean(), results_log.std())
+

@@ -4,7 +4,7 @@ sys.path.insert(0, '..')
 sys.path.insert(0, '.')
 
 import auxiliarymethods.datasets as dp
-import preprocessing
+import preprocessing as pre
 
 import os.path as osp
 import numpy as np
@@ -23,11 +23,11 @@ class Alchemy(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        return "alchemy10d"
+        return "alchemy10"
 
     @property
     def processed_file_names(self):
-        return "alchemy10d"
+        return "alchemy10"
 
     def download(self):
         pass
@@ -62,14 +62,11 @@ class Alchemy(InMemoryDataset):
         targets.extend(tmp_2)
         targets.extend(tmp_3)
 
-        node_labels = preprocessing.get_all_node_labels_allchem(True, True, indices_train, indices_val, indices_test)
+        node_labels = pre.get_all_node_labels_allchem(True, True, indices_train, indices_val, indices_test)
 
-        print(len(targets))
-
-        print("###")
-        matrices = preprocessing.get_all_matrices("alchemy_full", indices_train)
-        matrices.extend(preprocessing.get_all_matrices("alchemy_full", indices_val))
-        matrices.extend(preprocessing.get_all_matrices("alchemy_full", indices_test))
+        matrices = pre.get_all_matrices("alchemy_full", indices_train)
+        matrices.extend(pre.get_all_matrices("alchemy_full", indices_val))
+        matrices.extend(pre.get_all_matrices("alchemy_full", indices_test))
 
         for i, m in enumerate(matrices):
             edge_index_1 = torch.tensor(matrices[i][0]).t().contiguous()
@@ -206,9 +203,7 @@ class NetGIN(torch.nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '.', 'data', 'Alchemy')
 dataset = Alchemy(path, transform=MyTransform())
-print(len(dataset))
 
-print("###")
 mean = dataset.data.y.mean(dim=0, keepdim=True)
 std = dataset.data.y.std(dim=0, keepdim=True)
 dataset.data.y = (dataset.data.y - mean) / std
@@ -226,7 +221,6 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 results = []
 results_log = []
 for _ in range(5):
-
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = NetGIN(64).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)

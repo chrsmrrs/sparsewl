@@ -1,39 +1,34 @@
-from __future__ import division
-
 import sys
 
-import auxiliarymethods.datasets as dp
-import kernel_baselines as kb
-
 sys.path.insert(0, '..')
-sys.path.insert(0, '../..')
 sys.path.insert(0, '.')
+
+import auxiliarymethods.datasets as dp
+import preprocessing as pre
 
 import os.path as osp
 import numpy as np
 import torch
-from torch.nn import Linear as Lin
 from torch.nn import Sequential, Linear, ReLU
-from torch_geometric.nn import global_mean_pool, GINConv, Set2Set
-
-from torch_geometric.data import (InMemoryDataset, Data)
-from torch_geometric.data import DataLoader
+from torch_geometric.nn import GINConv, Set2Set
+from torch_geometric.data import InMemoryDataset, Data, DataLoader
 import torch.nn.functional as F
 import pickle
 
-class ZINC_malkin(InMemoryDataset):
+
+class Alchemy_malkin(InMemoryDataset):
     def __init__(self, root, transform=None, pre_transform=None,
                  pre_filter=None):
-        super(ZINC_malkin, self).__init__(root, transform, pre_transform, pre_filter)
+        super(Alchemy_malkin, self).__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self):
-        return "rdddddfdgrer"
+        return "alchemymalkin"
 
     @property
     def processed_file_names(self):
-        return "fdddfddddgr"
+        return "alchemymalkin"
 
     def download(self):
         pass
@@ -41,46 +36,11 @@ class ZINC_malkin(InMemoryDataset):
     def process(self):
         data_list = []
 
-        indices_train = []
-        indices_val = []
-        indices_test = []
-
-        infile = open("data/test_al_10.index", "r")
-        for line in infile:
-            indices_test = line.split(",")
-            indices_test = [int(i) for i in indices_test]
-
-        infile = open("data/val_al_10.index", "r")
-        for line in infile:
-            indices_val = line.split(",")
-            indices_val = [int(i) for i in indices_val]
-
-        infile = open("data/train_al_10.index", "r")
-        for line in infile:
-            indices_train = line.split(",")
-            indices_train = [int(i) for i in indices_train]
-
-        print("###")
-
-        targets = dp.get_dataset("alchemy_full", multigregression=True)
-        tmp1 = targets[indices_train].tolist()
-        tmp2 = targets[indices_val].tolist()
-        tmp3 = targets[indices_test].tolist()
-        targets = tmp1
-        targets.extend(tmp2)
-        targets.extend(tmp3)
-        print(len(targets))
-
-        node_labels = kb.get_all_node_labels_allchem(True, True, indices_train, indices_val, indices_test)
-
-        print("###")
-        matrices = kb.get_all_matrices_dwl("alchemy_full", indices_train)
-        matrices.extend(kb.get_all_matrices_dwl("alchemy_full", indices_val))
-        matrices.extend(kb.get_all_matrices_dwl("alchemy_full", indices_test))
-        print(len(matrices))
+        targets = dp.get_dataset("alchemy_full", multigregression=True).tolist()
+        node_labels = pre.get_all_node_labels("alchemy_full", True, True)
+        matrices = pre.get_all_matrices_dwl("alchemy_full", list(range(202579)))
 
         for i, m in enumerate(matrices):
-            print(i)
             edge_index_1_l = torch.tensor(matrices[i][0]).t().contiguous()
             edge_index_1_g = torch.tensor(matrices[i][1]).t().contiguous()
             edge_index_2_l = torch.tensor(matrices[i][2]).t().contiguous()
@@ -137,7 +97,6 @@ class NetGIN(torch.nn.Module):
         self.conv1_2_g = GINConv(nn1_2_g, train_eps=True)
         self.mlp_1 = Sequential(Linear(4 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                                 torch.nn.BatchNorm1d(dim), ReLU())
-
         nn2_1_l = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                              torch.nn.BatchNorm1d(dim), ReLU())
         nn2_2_l = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
@@ -214,7 +173,7 @@ class NetGIN(torch.nn.Module):
                                 torch.nn.BatchNorm1d(dim), ReLU())
 
         self.set2set = Set2Set(1 * dim, processing_steps=6)
-        self.fc1 = Lin(2 * dim, dim)
+        self.fc1 = Linear(2 * dim, dim)
         self.fc4 = Linear(dim, 12)
 
     def forward(self, data):
@@ -264,28 +223,30 @@ class NetGIN(torch.nn.Module):
         return x
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-path = osp.join(osp.dirname(osp.realpath(__file__)), '.', 'data', 'ZINC')
-dataset = ZINC_malkin(path, transform=MyTransform())
-print(len(dataset))
-
-mean = dataset.data.y.mean(dim=0, keepdim=True)
-std = dataset.data.y.std(dim=0, keepdim=True)
-dataset.data.y = (dataset.data.y - mean) / std
-mean, std = mean.to(device), std.to(device)
-
-train_dataset = dataset[0:10000].shuffle()
-val_dataset = dataset[10000:11000].shuffle()
-test_dataset = dataset[11000:12000].shuffle()
-
-batch_size = 64
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
-
-plot_it = []
+plot_all = []
 results = []
-for _ in range(1):
+results_log = []
+for _ in range(5):
+    plot_it = []
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    path = osp.join(osp.dirname(osp.realpath(__file__)), '.', 'data', 'Alchemy_malkin')
+    dataset = Alchemy_malkin(path, transform=MyTransform()).shuffle()
+
+    mean = dataset.data.y.mean(dim=0, keepdim=True)
+    mean_abs = dataset.data.y.abs().mean(dim=0, keepdim=True).to(device)
+    std = dataset.data.y.std(dim=0, keepdim=True)
+    dataset.data.y = (dataset.data.y - mean) / std
+    mean, std = mean.to(device), std.to(device)
+
+    train_dataset = dataset[0:162063].shuffle()
+    val_dataset = dataset[162063:182321].shuffle()
+    test_dataset = dataset[182321:].shuffle()
+
+    batch_size = 64
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+
     model = NetGIN(64).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
@@ -297,7 +258,7 @@ for _ in range(1):
         loss_all = 0
 
         lf = torch.nn.L1Loss()
-
+        error = torch.zeros([1, 12]).to(device)
         for data in train_loader:
             data = data.to(device)
             optimizer.zero_grad()
@@ -305,43 +266,61 @@ for _ in range(1):
             loss.backward()
             loss_all += loss.item() * data.num_graphs
             optimizer.step()
-        return loss_all / len(train_loader.dataset)
+            with torch.no_grad():
+                error += ((data.y * std - model(data) * std).abs() / std).sum(dim=0)
+        error = error / len(train_loader.dataset)
 
+        return loss_all / len(train_loader.dataset), error.mean().item()
+
+
+    @torch.no_grad()
     def test(loader):
         model.eval()
-        error = 0
-        lf = torch.nn.L1Loss()
+        error = torch.zeros([1, 12]).to(device)
 
         for data in loader:
             data = data.to(device)
-            error += lf(model(data) * std, data.y * std).item()
-        return error / len(loader.dataset)
+            error += ((data.y * std - model(data) * std).abs() / std).sum(dim=0)
 
-    test_error = None
+        error = error / len(loader.dataset)
+        error_log = torch.log(error)
+
+        return error.mean().item(), error_log.mean().item()
+
+
     best_val_error = None
-    for epoch in range(1, 201):
+    test_error = None
+    test_error_log = None
+    for epoch in range(1, 1001):
         lr = scheduler.optimizer.param_groups[0]['lr']
-        loss = train()
-        train_error = test(train_loader)
-        val_error = test(val_loader)
+        loss, train_error = train()
+        val_error, _ = test(val_loader)
         scheduler.step(val_error)
 
         if best_val_error is None or val_error <= best_val_error:
-            test_error = test(test_loader)
+            test_error, test_error_log = test(test_loader)
             best_val_error = val_error
 
         plot_it.append([train_error, val_error, test_error])
-
         print('Epoch: {:03d}, LR: {:.7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '
               'Test MAE: {:.7f}'.format(epoch, lr, loss, val_error, test_error))
 
         if lr < 0.000001:
             print("Converged.")
+            plot_all.append(plot_it)
             break
 
     results.append(test_error)
+    results_log.append(test_error_log)
 
-print(len(plot_it))
-# Write to file.
-with open('plot_alchem_malkin_10k', 'wb') as fp:
-    pickle.dump(plot_it, fp)
+print("########################")
+print(results)
+results = np.array(results)
+print(results.mean(), results.std())
+
+print(results_log)
+results_log = np.array(results_log)
+print(results_log.mean(), results_log.std())
+
+with open('plot_alchem_malkin_all', 'wb') as fp:
+    pickle.dump(plot_all, fp)
