@@ -4,7 +4,7 @@ sys.path.insert(0, '..')
 sys.path.insert(0, '.')
 
 import auxiliarymethods.datasets as dp
-import pre
+import preprocessing
 
 import os.path as osp
 import numpy as np
@@ -62,14 +62,14 @@ class Alchemy(InMemoryDataset):
         targets.extend(tmp_2)
         targets.extend(tmp_3)
 
-        node_labels = pre.get_all_node_labels_allchem(True, True, indices_train, indices_val, indices_test)
+        node_labels = preprocessing.get_all_node_labels_allchem(True, True, indices_train, indices_val, indices_test)
 
         print(len(targets))
 
         print("###")
-        matrices = pre.get_all_matrices("alchemy_full", indices_train)
-        matrices.extend(pre.get_all_matrices("alchemy_full", indices_val))
-        matrices.extend(pre.get_all_matrices("alchemy_full", indices_test))
+        matrices = preprocessing.get_all_matrices("alchemy_full", indices_train)
+        matrices.extend(preprocessing.get_all_matrices("alchemy_full", indices_val))
+        matrices.extend(preprocessing.get_all_matrices("alchemy_full", indices_test))
 
         for i, m in enumerate(matrices):
             edge_index_1 = torch.tensor(matrices[i][0]).t().contiguous()
