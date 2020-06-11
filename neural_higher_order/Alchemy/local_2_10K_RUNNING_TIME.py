@@ -13,26 +13,27 @@ import os.path as osp
 import numpy as np
 import torch
 from torch.nn import Sequential, Linear, ReLU
-from torch_geometric.nn import global_mean_pool, GINConv, Set2Set
+from torch_geometric.nn import GINConv, Set2Set
 
 from torch_geometric.data import (InMemoryDataset, Data)
 from torch_geometric.data import DataLoader
 import torch.nn.functional as F
 from timeit import default_timer as timer
 
-class ZINC_wl(InMemoryDataset):
+
+class ZINC(InMemoryDataset):
     def __init__(self, root, transform=None, pre_transform=None,
                  pre_filter=None):
-        super(ZINC_wl, self).__init__(root, transform, pre_transform, pre_filter)
+        super(ZINC, self).__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self):
-        return "ZINC_gwsddffdffl"
+        return "ZINC_adllddrefdvv10kd"
 
     @property
     def processed_file_names(self):
-        return "ZINC_wfgdlffddffss"
+        return "ZINC_alrlddvve1ddf0kd"
 
     def download(self):
         pass
@@ -72,10 +73,12 @@ class ZINC_wl(InMemoryDataset):
         print("###")
         node_labels = kb.get_all_node_labels_allchem(True, True, indices_train, indices_val, indices_test)
 
+        print(len(targets))
+
         print("###")
-        matrices = kb.get_all_matrices_wl("alchemy_full", indices_train)
-        matrices.extend(kb.get_all_matrices_wl("alchemy_full", indices_val))
-        matrices.extend(kb.get_all_matrices_wl("alchemy_full", indices_test))
+        matrices = kb.get_all_matrices("alchemy_full", indices_train)
+        matrices.extend(kb.get_all_matrices("alchemy_full", indices_val))
+        matrices.extend(kb.get_all_matrices("alchemy_full", indices_test))
 
         print(len(matrices))
 
@@ -172,7 +175,6 @@ class NetGIN(torch.nn.Module):
         self.conv6_2 = GINConv(nn6_2, train_eps=True)
         self.mlp_6 = Sequential(Linear(2 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                                 torch.nn.BatchNorm1d(dim), ReLU())
-
         self.set2set = Set2Set(1 * dim, processing_steps=6)
         self.fc1 = Linear(2 * dim, dim)
         self.fc4 = Linear(dim, 12)
@@ -215,8 +217,7 @@ class NetGIN(torch.nn.Module):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '.', 'data', 'ZINC')
-dataset = ZINC_wl(path, transform=MyTransform())
-print(len(dataset))
+dataset = ZINC(path, transform=MyTransform())
 
 mean = dataset.data.y.mean(dim=0, keepdim=True)
 std = dataset.data.y.std(dim=0, keepdim=True)
@@ -231,7 +232,6 @@ batch_size = 64
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
-
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = NetGIN(256).to(device)
@@ -273,7 +273,7 @@ i = 0
 torch.cuda.synchronize()
 start = timer()
 for epoch in range(1, 201):
-    i+=1
+    i += 1
     lr = scheduler.optimizer.param_groups[0]['lr']
     loss = train()
     val_error = test(val_loader)
@@ -290,6 +290,6 @@ for epoch in range(1, 201):
         print("Converged.")
         break
 torch.cuda.synchronize()
-stop= timer()
+stop = timer()
 delta = stop - start
-print(delta, delta/i)
+print(delta, delta / i)

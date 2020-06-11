@@ -14,12 +14,13 @@ import numpy as np
 import torch
 from torch.nn import Linear as Lin
 from torch.nn import Sequential, Linear, ReLU
-from torch_geometric.nn import global_mean_pool, GINConv, Set2Set
+from torch_geometric.nn import GINConv, Set2Set
 
 from torch_geometric.data import (InMemoryDataset, Data)
 from torch_geometric.data import DataLoader
 import torch.nn.functional as F
 from timeit import default_timer as timer
+
 
 class ZINC_malkin(InMemoryDataset):
     def __init__(self, root, transform=None, pre_transform=None,
@@ -283,7 +284,6 @@ train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
-
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = NetGIN(256).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -324,7 +324,7 @@ i = 0
 torch.cuda.synchronize()
 start = timer()
 for epoch in range(1, 201):
-    i+=1
+    i += 1
     lr = scheduler.optimizer.param_groups[0]['lr']
     loss = train()
     val_error = test(val_loader)
@@ -341,6 +341,6 @@ for epoch in range(1, 201):
         print("Converged.")
         break
 torch.cuda.synchronize()
-stop= timer()
+stop = timer()
 delta = stop - start
-print(delta, delta/i)
+print(delta, delta / i)
