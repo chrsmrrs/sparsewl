@@ -2152,7 +2152,7 @@ new_targets;
 
 }
 
-PYBIND11_MODULE(kernel_baselines, m) {
+PYBIND11_MODULE(preprocessing, m) {
     m.def("get_all_matrices", &get_all_matrices);
     m.def("get_all_matrices_wl", &get_all_matrices_wl);
     m.def("get_all_matrices_dwl", &get_all_matrices_dwl);
