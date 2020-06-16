@@ -1,6 +1,3 @@
-/**********************************************************************
- * Copyright (C) 2017 Christopher Morris <christopher.morris@udo.edu>
- *********************************************************************/
 
 #include <cstdio>
 #include "src/AuxiliaryMethods.h"
@@ -9,17 +6,18 @@
 
 
 #ifdef __linux__
-//    #include <pybind11/pybind11.h>
-//    #include <pybind11/eigen.h>
-//    #include <pybind11/stl.h>
-#include </home/morrchri/.local/include/python3.8/pybind11/pybind11.h>
-#include </home/morrchri/.local/include/python3.8/pybind11/eigen.h>
-#include </home/morrchri/.local/include/python3.8/pybind11/stl.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/eigen.h>
+#include <pybind11/stl.h>
+//#include </home/xxx/.local/include/python3.8/pybind11/pybind11.h>
+//#include </home/xxx/.local/include/python3.8/pybind11/eigen.h>
+//#include </home/xxx/.local/include/python3.8/pybind11/stl.h>
 #else
-    // MacOS.
-    #include </usr/local/include/pybind11/pybind11.h>
-    #include </usr/local/include/pybind11/stl.h>
-    #include </usr/local/include/pybind11/eigen.h>
+// MacOS.
+#include </usr/local/include/pybind11/pybind11.h>
+#include </usr/local/include/pybind11/stl.h>
+#include </usr/local/include/pybind11/eigen.h>
+
 #endif
 
 
@@ -2127,7 +2125,8 @@ get_all_edge_labelslg_ZINC_1(const bool use_node_labels, const bool use_edge_lab
 }
 
 
-vector<int> read_classes(string data_set_name) {
+vector<int> read_classes(string
+data_set_name) {
 return
 AuxiliaryMethods::read_classes(data_set_name);
 }

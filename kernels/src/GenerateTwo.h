@@ -1,6 +1,4 @@
-/**********************************************************************
- * Copyright (C) 2017 Christopher Morris <christopher.morris@udo.edu>
- *********************************************************************/
+
 
 #ifndef WLFAST_GENERATETWO_H
 #define WLFAST_GENERATETWO_H

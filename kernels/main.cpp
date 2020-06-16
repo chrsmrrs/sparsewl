@@ -1,7 +1,3 @@
-/**********************************************************************
- * Copyright (C) 2020 Christopher Morris <christopher.morris@udo.edu>
- *********************************************************************/
-
 #include <cstdio>
 #include "src/AuxiliaryMethods.h"
 #include "src/ColorRefinementKernel.h"
@@ -18,15 +14,15 @@ using namespace std;
 using namespace GraphLibrary;
 using namespace std;
 
-template<typename T>
-std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
-    if (!v.empty()) {
-        out << '[';
-        std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
-        out << "\b\b]";
-    }
-    return out;
-}
+//template<typename T>
+//std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
+//    if (!v.empty()) {
+//        out << '[';
+//        std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+//        out << "\b\b]";
+//    }
+//    return out;
+//}
 
 int main() {
 

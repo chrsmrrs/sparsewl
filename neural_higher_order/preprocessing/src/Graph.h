@@ -1,15 +1,7 @@
-/**********************************************************************
- * Copyright (C) 2017 Christopher Morris <christopher.morris@udo.edu>
- *********************************************************************/
-
 #ifndef WLFAST_GRAPH_H
 #define WLFAST_GRAPH_H
 
-//#ifdef __linux__
-//#include <eigen3/Eigen/Sparse>
-//#else
-//#include "/usr/local/include/eigen3/Eigen/Sparse"
-//#endif
+
 
 #include <unordered_set>
 #include <unordered_map>
@@ -30,13 +22,8 @@ using Edge = tuple<Node, Node>;
 using EdgeLabels = unordered_map<Edge, uint>;
 using EdgeAttributes = unordered_map<Edge,vector<float>>;
 using EdgeList = vector<Edge>;
-//using SpMatrix = Eigen::SparseMatrix<double>;
-//using GramMatrix = SpMatrix;
-//using AdjacenyMatrix = SpMatrix;
 using ColorCounter = unordered_map<Label, uint>;
-//using SpMatrix = Eigen::SparseMatrix<double>;
-//using GramMatrix = SpMatrix;
-//using AdjacenyMatrix = SpMatrix;
+
 
 //using S = Eigen::Triplet<double>;
 

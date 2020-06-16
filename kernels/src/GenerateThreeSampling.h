@@ -1,6 +1,3 @@
-/**********************************************************************
- * Copyright (C) 2017 Christopher Morris <christopher.morris@udo.edu>
- *********************************************************************/
 
 #ifndef WLFAST_GENERATETHREESAMPLING_H
 #define WLFAST_GENERATETHREESAMPLING_H

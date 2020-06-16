@@ -1,5 +1,3 @@
-from __future__ import division
-
 import sys
 
 sys.path.insert(0, '..')
@@ -28,16 +26,9 @@ class GINConv(MessagePassing):
 
         self.bond_encoder = Sequential(Linear(emb_dim, dim1), torch.nn.BatchNorm1d(dim1), ReLU(), Linear(dim1, dim1),
                                        torch.nn.BatchNorm1d(dim1), ReLU())
-        # self.bond_encoder = torch.nn.Sequential(torch.nn.Linear(emb_dim, 2 * emb_dim), torch.nn.BatchNorm1d(2 * emb_dim),
-        #                               torch.nn.ReLU(), torch.nn.Linear(2 * emb_dim, dim1))
 
         self.mlp = Sequential(Linear(dim1, dim2), torch.nn.BatchNorm1d(dim2), ReLU(), Linear(dim2, dim2),
                               torch.nn.BatchNorm1d(dim2), ReLU())
-        # self.mlp = torch.nn.Sequential(torch.nn.Linear(dim1, 2 * dim1), torch.nn.BatchNorm1d(2 * dim1),
-        #                               torch.nn.ReLU(), torch.nn.Linear(2 * dim1, dim2))
-
-        # TODO Bondencoder
-        # self.bond_encoder = BondEncoder(emb_dim=emb_dim)
 
         self.eps = torch.nn.Parameter(torch.Tensor([0]))
 
@@ -66,18 +57,11 @@ class NetGINE(torch.nn.Module):
         dim = dim
 
         self.conv1 = GINConv(6, num_features, dim)
-        # self.bn1 = torch.nn.BatchNorm1d(dim)
-
         self.conv2 = GINConv(6, dim, dim)
-        # self.bn2 = torch.nn.BatchNorm1d(dim)
-
         self.conv3 = GINConv(6, dim, dim)
-        # self.bn3 = torch.nn.BatchNorm1d(dim)
-
         self.conv4 = GINConv(6, dim, dim)
         self.conv5 = GINConv(6, dim, dim)
         self.conv6 = GINConv(6, dim, dim)
-        # self.bn4 = torch.nn.BatchNorm1d(dim)
 
         self.set2set = Set2Set(1 * dim, processing_steps=6)
 
@@ -88,28 +72,16 @@ class NetGINE(torch.nn.Module):
         x = data.x
 
         x_1 = F.relu(self.conv1(x, data.edge_index, data.edge_attr))
-        # x_1 = self.bn1(x_1)
-
         x_2 = F.relu(self.conv2(x_1, data.edge_index, data.edge_attr))
-        # x_2 = self.bn2(x_2)
         x_3 = F.relu(self.conv3(x_2, data.edge_index, data.edge_attr))
-        # x_3 = self.bn3(x_3)
         x_4 = F.relu(self.conv4(x_3, data.edge_index, data.edge_attr))
         x_5 = F.relu(self.conv5(x_4, data.edge_index, data.edge_attr))
         x_6 = F.relu(self.conv6(x_5, data.edge_index, data.edge_attr))
-        # x_4 = self.bn4(x_4)
-
-        # x = torch.cat([x_1, x_2, x_3, x_4], dim=-1)
         x = x_6
 
         x = self.set2set(x, data.batch)
 
         x = F.relu(self.fc1(x))
-        # # x = F.dropout(x, p=0.5, training=self.training)
-        # x = F.relu(self.fc2(x))
-        # # x = F.dropout(x, p=0.5, training=self.training)
-        # x = F.relu(self.fc3(x))
-        # # x = F.dropout(x, p=0.5, training=self.training)
         x = self.fc4(x)
         return x
 
@@ -148,9 +120,7 @@ for _ in range(5):
     dataset = QM9(path, transform=T.Compose([Complete(), T.Distance(norm=False)]))
     dataset.data.y = dataset.data.y[:,0:12]
 
-
     dataset = dataset.shuffle()
-
 
     tenpercent = int(len(dataset) * 0.1)
     print("###")
@@ -172,7 +142,6 @@ for _ in range(5):
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
-    # TODO
     model = NetGINE(64).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
