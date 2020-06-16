@@ -212,8 +212,8 @@ namespace AuxiliaryMethods {
 
     vector<int> read_classes(string data_set_name) {
         string line;
-
-        string path = ".";
+        
+        string path = "/home/morris/WWW/graphkerneldatasets/DS_all/";
         vector<int> classes;
 
         ifstream myfile(
