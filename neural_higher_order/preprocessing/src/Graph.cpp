@@ -1,7 +1,3 @@
-/**********************************************************************
- * Copyright (C) 2017 Christopher Morris <christopher.morris@udo.edu>
- *********************************************************************/
-
 #include "Graph.h"
 
 namespace GraphLibrary {

@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 /**
  * HashMap based implementation of a feature vector.
  * 
- * @author kriege
+ * @author xxx
  *
  * @param <T>
  */

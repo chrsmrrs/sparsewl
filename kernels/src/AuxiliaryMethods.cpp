@@ -1,6 +1,4 @@
-/**********************************************************************
- * Copyright (C) 2017 Christopher Morris <christopher.morris@udo.edu>
- *********************************************************************/
+
 
 #include "AuxiliaryMethods.h"
 
@@ -38,11 +36,11 @@ namespace AuxiliaryMethods {
     GraphDatabase read_graph_txt_file(string data_set_name) {
         string line;
 
-        string path = ".";
+        string path = "/home/morris/WWW/graphkerneldatasets/DS_all/";
 
         vector<uint> graph_indicator;
         ifstream myfile(
-                path + "/datasets/" + data_set_name + "/" + data_set_name +
+                path + data_set_name + "/" + data_set_name +
                 "_graph_indicator.txt");
 
 
@@ -63,7 +61,7 @@ namespace AuxiliaryMethods {
         string label;
         Labels node_labels;
         ifstream labels(
-                path + "/datasets/" + data_set_name + "/" + data_set_name + "_node_labels.txt");
+                path + data_set_name + "/" + data_set_name + "_node_labels.txt");
         if (labels.is_open()) {
             while (getline(labels, label)) {
                 node_labels.push_back(stoul(label));
@@ -78,7 +76,7 @@ namespace AuxiliaryMethods {
         string attribute;
         Attributes node_attributes;
         ifstream attributes(
-                path + "/datasets/" + data_set_name + "/" + data_set_name + "_node_attributes.txt");
+                path  + data_set_name + "/" + data_set_name + "_node_attributes.txt");
         if (attributes.is_open()) {
             while (getline(attributes, attribute)) {
                 node_attributes.push_back(split_string_float(attribute));
@@ -125,7 +123,7 @@ namespace AuxiliaryMethods {
         // Get labels from for each node.
         bool edge_label_data = true;
         Labels edge_labels;
-        ifstream elabels(path + "/datasets/" + data_set_name + "/" + data_set_name + "_edge_labels.txt");
+        ifstream elabels(path + data_set_name + "/" + data_set_name + "_edge_labels.txt");
         if (elabels.is_open()) {
             while (getline(elabels, label)) {
                 edge_labels.push_back(stoul(label));
@@ -143,7 +141,7 @@ namespace AuxiliaryMethods {
 
         bool edge_attribute_data = true;
         Attributes edge_attributes;
-        ifstream eattr(path + "/datasets/" + data_set_name + "/" + data_set_name + "_edge_attributes.txt");
+        ifstream eattr(path + data_set_name + "/" + data_set_name + "_edge_attributes.txt");
         if (eattr.is_open()) {
             while (getline(eattr, label)) {
                 edge_attributes.push_back(split_string_float(label));
@@ -161,7 +159,7 @@ namespace AuxiliaryMethods {
 
         uint c = 0;
         vector<int> edges;
-        ifstream edge_file(path + "/datasets/" + data_set_name + "/" + data_set_name + "_A.txt");
+        ifstream edge_file(path + data_set_name + "/" + data_set_name + "_A.txt");
         if (edge_file.is_open()) {
             while (getline(edge_file, line)) {
                 vector<int> r = split_string(line);
@@ -214,12 +212,12 @@ namespace AuxiliaryMethods {
 
     vector<int> read_classes(string data_set_name) {
         string line;
-
-        string path = ".";
+        
+        string path = "/home/morris/WWW/graphkerneldatasets/DS_all/";
         vector<int> classes;
 
         ifstream myfile(
-                path + "/datasets/" + data_set_name + "/" + data_set_name +
+                path + data_set_name + "/" + data_set_name +
                 "_graph_labels.txt");
         if (myfile.is_open()) {
             while (getline(myfile, line)) {

@@ -1,6 +1,3 @@
-/**********************************************************************
- * Copyright (C) 2017 Christopher Morris <christopher.morris@udo.edu>
- *********************************************************************/
 
 #include "AuxiliaryMethods.h"
 #include "GenerateThree.h"

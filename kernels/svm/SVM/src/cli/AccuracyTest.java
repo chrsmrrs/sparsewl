@@ -51,7 +51,7 @@ import datastructure.SparseFeatureVector;
  * which should be checked carefully.
  * 
  * 
- * @author kriege
+ * @author xxx
  *
  */
 public class AccuracyTest {
