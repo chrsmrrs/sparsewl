@@ -33,13 +33,13 @@ def main():
     for d, use_labels in dataset:
         dp.get_dataset(d)
 
-        acc, s_1, s_2 = gnn_evaluation(GINE, d, [3], [64], max_num_epochs=200,
+        acc, s_1, s_2 = gnn_evaluation(GINE, d, [1, 2, 3, 4, 5], [64], max_num_epochs=200,
                                        batch_size=64, start_lr=0.01,
                                        num_repetitions=num_reps, all_std=True)
         print(d + " " + "GINE " + str(acc) + " " + str(s_1) + " " + str(s_2))
         results.append(d + " " + "GINE " + str(acc) + " " + str(s_1) + " " + str(s_2))
 
-        acc, s_1, s_2 = gnn_evaluation(GINE0, d, [3], [64], max_num_epochs=200, batch_size=64,
+        acc, s_1, s_2 = gnn_evaluation(GINE0, d, [1, 2, 3, 4, 5], [64], max_num_epochs=200, batch_size=64,
                                        start_lr=0.01,
                                        num_repetitions=num_reps, all_std=True)
         print(d + " " + "GINE0 " + str(acc) + " " + str(s_1) + " " + str(s_2))
