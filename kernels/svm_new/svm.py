@@ -23,9 +23,12 @@ def main():
                ["PTC_FM", True], ["REDDIT-BINARY", False], ["ENZYMES", True]]
 
     for d, use_labels in dataset:
+        gram_matrices = []
         for i in range(0,6):
             gram_matrix, classes = read_lib_svm(path + d + "__" + algorithm + "_" + str(i) + ".gram")
-            print(gram_matrix.shape)
+            print(type(gram_matrix))
+            exit()
+            gram_matrices.append(gram_matrix)
 
 
 
