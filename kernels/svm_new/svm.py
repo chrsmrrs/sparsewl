@@ -4,7 +4,9 @@ from scipy import sparse as sp
 from sklearn.model_selection import KFold
 from sklearn.model_selection import train_test_split
 from sklearn.svm import LinearSVC
+from auxiliarymethods.kernel_evaluation import kernel_svm_evaluation
 from auxiliarymethods.auxiliary_methods import read_lib_svm
+
 
 def read_classes(ds_name):
     with open("../datasets/" + ds_name + "/" + ds_name + "_graph_labels.txt", "r") as f:
@@ -26,9 +28,13 @@ def main():
         gram_matrices = []
         for i in range(0,6):
             gram_matrix, classes = read_lib_svm(path + d + "__" + algorithm + "_" + str(i) + ".gram")
-            print(type(gram_matrix))
-            exit()
             gram_matrices.append(gram_matrix)
+
+            acc, s_1, s_2 = kernel_svm_evaluation(gram_matrices, classes, num_repetitions=1, all_std=True)
+            print(acc)
+
+
+
 
 
 
