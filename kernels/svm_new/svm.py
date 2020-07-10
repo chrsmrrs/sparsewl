@@ -20,22 +20,21 @@ def main():
 
     path = "../svm/SVM/src/EXP/"
 
-    algorithm = "LWLP2"
+
     dataset = [["IMDB-BINARY", False], ["IMDB-MULTI", False], ["NCI1", True], ["NCI109", True], ["PROTEINS", True],
                ["PTC_FM", True], ["REDDIT-BINARY", False], ["ENZYMES", True]]
+    algorithm = "LWLP2"
 
     for d, use_labels in dataset:
         gram_matrices = []
         for i in range(0,6):
             gram_matrix, _ = read_lib_svm(path + d + "__" + algorithm + "_" + str(i) + ".gram")
             classes = read_classes(d)
-
-
             gram_matrices.append(gram_matrix)
 
 
-            acc, s_1, s_2 = kernel_svm_evaluation(gram_matrices, classes, num_repetitions=1, all_std=True)
-            print(acc)
+        acc, s_1, s_2 = kernel_svm_evaluation(gram_matrices, classes, num_repetitions=10, all_std=True)
+        print(acc, s_1, s_2)
 
 
 
