@@ -9,11 +9,11 @@ from auxiliarymethods.auxiliary_methods import read_lib_svm
 
 
 def read_classes(ds_name):
-    with open("../datasets/" + ds_name + "/" + ds_name + "_graph_labels.txt", "r") as f:
+    with open("../../../WWW/graphkerneldatasets/DS_all/" + ds_name + "/" + ds_name + "_graph_labels.txt", "r") as f:
         classes = [int(i) for i in list(f)]
     f.closed
 
-    return classes
+    return np.array(classes)
 
 
 def main():
@@ -27,14 +27,12 @@ def main():
     for d, use_labels in dataset:
         gram_matrices = []
         for i in range(0,6):
-            gram_matrix, classes = read_lib_svm(path + d + "__" + algorithm + "_" + str(i) + ".gram")
-            print(classes)
-            print(len(classes))
+            gram_matrix, _ = read_lib_svm(path + d + "__" + algorithm + "_" + str(i) + ".gram")
+            classes = read_classes(d)
+
 
             gram_matrices.append(gram_matrix)
 
-
-            print(type(classes), classes.shape)
 
             acc, s_1, s_2 = kernel_svm_evaluation(gram_matrices, classes, num_repetitions=1, all_std=True)
             print(acc)
