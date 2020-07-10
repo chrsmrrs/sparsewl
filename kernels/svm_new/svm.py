@@ -16,8 +16,7 @@ def read_classes(ds_name):
 
 def main():
 
-    path = "./svm/SVM/src/EXP/"
-
+    path = "../svm/SVM/src/EXP/"
 
     algorithm = "LWL2P"
     dataset = [["IMDB-BINARY", False], ["IMDB-MULTI", False], ["NCI1", True], ["NCI109", True], ["PROTEINS", True],
