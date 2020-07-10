@@ -18,7 +18,7 @@ def main():
 
     path = "../svm/SVM/src/EXP/"
 
-    algorithm = "LWL2P"
+    algorithm = "LWLP2"
     dataset = [["IMDB-BINARY", False], ["IMDB-MULTI", False], ["NCI1", True], ["NCI109", True], ["PROTEINS", True],
                ["PTC_FM", True], ["REDDIT-BINARY", False], ["ENZYMES", True]]
 
