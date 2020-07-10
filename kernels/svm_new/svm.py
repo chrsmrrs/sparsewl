@@ -26,6 +26,7 @@ def main():
     for d, use_labels in dataset:
         for i in range(0,6):
             gram_matrix, classes = read_lib_svm(path + d + "__" + algorithm + "_" + str(i) + ".gram")
+            print(gram_matrix.shape)
 
 
 
