@@ -28,6 +28,9 @@ def main():
         gram_matrices = []
         for i in range(0,6):
             gram_matrix, classes = read_lib_svm(path + d + "__" + algorithm + "_" + str(i) + ".gram")
+            print(classes)
+            print(len(classes))
+
             gram_matrices.append(gram_matrix)
 
 
