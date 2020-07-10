@@ -9,7 +9,7 @@ def read_lib_svm(str):
     gm, c = ds.load_svmlight_file(str, multilabel=True)
 
     gram_matrix = gm.toarray()
-    return gram_matrix[:, 1:], c
+    return gram_matrix[:, 1:], np.array(c)
 
 
 # Cosine normalization for a gram matrix.
