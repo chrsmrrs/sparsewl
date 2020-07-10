@@ -67,7 +67,7 @@ def main():
                 all_feature_matrices.append(feature_vector)
                 print("data")
 
-                acc, s_1, s_2 = linear_svm_evaluation(all_feature_matrices, classes, num_repetitions=1, all_std=True)
+                acc, s_1, s_2 = linear_svm_evaluation(all_feature_matrices, classes, num_repetitions=3, all_std=True)
                 print(acc, s_1, s_2)
 
 
