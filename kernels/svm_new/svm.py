@@ -30,6 +30,9 @@ def main():
             gram_matrix, classes = read_lib_svm(path + d + "__" + algorithm + "_" + str(i) + ".gram")
             gram_matrices.append(gram_matrix)
 
+
+            print(type(classes), classes.shape)
+
             acc, s_1, s_2 = kernel_svm_evaluation(gram_matrices, classes, num_repetitions=1, all_std=True)
             print(acc)
 
