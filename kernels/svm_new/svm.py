@@ -41,7 +41,6 @@ def main():
                 acc, acc_train, s_1 = kernel_svm_evaluation(gram_matrices, classes, num_repetitions=10, all_std=False)
                 print(a, d, acc, acc_train, s_1)
 
-    exit()
 
     path = "../svm/SVM/src/EXPSPARSE/"
     for name in ["Yeast", "YeastH", "UACC257", "UACC257H", "OVCAR-8", "OVCAR-8H"]:
