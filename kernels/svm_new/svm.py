@@ -5,8 +5,9 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import train_test_split
 from sklearn.svm import LinearSVC
 from auxiliarymethods.kernel_evaluation import kernel_svm_evaluation, linear_svm_evaluation
-from auxiliarymethods.auxiliary_methods import read_lib_svm
-
+from auxiliarymethods.auxiliary_methods import read_lib_svm, normalize_gram_matrix
+import os.path
+from os import path as pth
 
 def read_classes(ds_name):
     with open("../../../WWW/graphkerneldatasets/DS_all/" + ds_name + "/" + ds_name + "_graph_labels.txt", "r") as f:
@@ -19,30 +20,32 @@ def read_classes(ds_name):
 def main():
 
 
-    # path = "../svm/SVM/src/EXP/"
-    # dataset = [["IMDB-BINARY", False], ["IMDB-MULTI", False], ["NCI1", True], ["NCI109", True], ["PROTEINS", True],
-    #            ["PTC_FM", True], ["REDDIT-BINARY", False], ["ENZYMES", True]]
-    # algorithms = ["LWLP2", "LWLP3"]
-    #
-    # for a in algorithms:
-    #     for d, use_labels in dataset:
-    #         gram_matrices = []
-    #         for i in range(0,6):
-    #             gram_matrix, _ = read_lib_svm(path + d + "__" + a + "_" + str(i) + ".gram")
-    #             classes = read_classes(d)
-    #             gram_matrices.append(gram_matrix)
-    #
-    #
-    #         acc, s_1, s_2 = kernel_svm_evaluation(gram_matrices, classes, num_repetitions=10, all_std=True)
-    #         print(acc, s_1, s_2)
+    path = "../svm/SVM/src/EXP/"
+    dataset = [["IMDB-BINARY", False], ["IMDB-MULTI", False], ["NCI1", True], ["NCI109", True], ["PROTEINS", True],
+               ["PTC_FM", True], ["REDDIT-BINARY", False], ["ENZYMES", True]]
+    algorithms = ["WL1", "GR", "SP", "WLOA", "LWL2", "LWLP2", "WL2", "DWL2", "LWL3", "LWLP3", "WL3", "DWL3"]
+
+    for a in algorithms:
+        for d, use_labels in dataset:
+            gram_matrices = []
+            for i in range(0,6):
+                if not pth.exists(path + d + "__" + a + "_" + str(i) + ".gram"):
+                    continue
+                else:
+                    gram_matrix, _ = read_lib_svm(path + d + "__" + a + "_" + str(i) + ".gram")
+                    gram_matrix = normalize_gram_matrix(gram_matrix)
+                    classes = read_classes(d)
+                    gram_matrices.append(gram_matrix)
+
+            if gram_matrices != []:
+                acc, acc_train, s_1 = kernel_svm_evaluation(gram_matrices, classes, num_repetitions=10, all_std=False)
+                print(a, d, acc, acc_train, s_1)
+
+    exit()
 
     path = "../svm/SVM/src/EXPSPARSE/"
     for name in ["Yeast", "YeastH", "UACC257", "UACC257H", "OVCAR-8", "OVCAR-8H"]:
-        # for algorithm in ["WL", "LWL2", "LWLP2"]:
-        for algorithm in ["LWLP2"]:
-
-            print(name)
-            print(algorithm)
+        for algorithm in ["WL", "LWL2", "LWLP2"]:
 
             # Collect feature matrices over all iterations
             all_feature_matrices = []
@@ -65,10 +68,9 @@ def main():
                 feature_vector = feature_vector.tocsr()
 
                 all_feature_matrices.append(feature_vector)
-                print("data")
 
-                acc, s_1, s_2 = linear_svm_evaluation(all_feature_matrices, classes, num_repetitions=3, all_std=True)
-                print(acc, s_1, s_2)
+                acc, s_1 = linear_svm_evaluation(all_feature_matrices, classes, num_repetitions=3, all_std=False)
+                print(name, algorithm, acc, s_1)
 
 
 
