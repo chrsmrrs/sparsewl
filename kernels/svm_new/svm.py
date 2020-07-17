@@ -21,8 +21,8 @@ def main():
 
 
     path = "../svm/SVM/src/EXP/"
-    dataset = [["IMDB-BINARY", False], ["IMDB-MULTI", False], ["NCI1", True], ["NCI109", True], ["PROTEINS", True],
-               ["PTC_FM", True], ["REDDIT-BINARY", False], ["ENZYMES", True]]
+    dataset = [["ENZYMES", True], ["IMDB-BINARY", False], ["IMDB-MULTI", False], ["NCI1", True], ["NCI109", True], ["PROTEINS", True],
+               ["PTC_FM", True], ["REDDIT-BINARY", False]]
     algorithms = ["WL1", "GR", "SP", "WLOA", "LWL2", "LWLP2", "WL2", "DWL2", "LWL3", "LWLP3", "WL3", "DWL3"]
 
     for a in algorithms:
