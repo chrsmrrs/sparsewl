@@ -38,7 +38,7 @@ def main():
                     gram_matrices.append(gram_matrix)
 
             if gram_matrices != []:
-                acc, acc_train, s_1 = kernel_svm_evaluation(gram_matrices, classes, num_repetitions=10, all_std=False)
+                acc, acc_train, s_1 = kernel_svm_evaluation(gram_matrices, classes, num_repetitions=10)
                 print(a, d, acc, acc_train, s_1)
 
 
