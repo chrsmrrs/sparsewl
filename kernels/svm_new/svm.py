@@ -10,7 +10,7 @@ import os.path
 from os import path as pth
 
 def read_classes(ds_name):
-    with open("../../../WWW/graphkerneldatasets/DS_all/" + ds_name + "/" + ds_name + "_graph_labels.txt", "r") as f:
+    with open("../../../WWW/graphkerneldatasets/DS_all_new/" + ds_name + "/" + ds_name + "_graph_labels.txt", "r") as f:
         classes = [int(i) for i in list(f)]
     f.closed
 
@@ -25,25 +25,26 @@ def main():
                ["PTC_FM", True], ["REDDIT-BINARY", False]]
     algorithms = ["WL1", "GR", "SP", "WLOA", "LWL2", "LWLP2", "WL2", "DWL2", "LWL3", "LWLP3", "WL3", "DWL3"]
 
-    for a in algorithms:
-        for d, use_labels in dataset:
-            gram_matrices = []
-            for i in range(0,6):
-                if not pth.exists(path + d + "__" + a + "_" + str(i) + ".gram"):
-                    continue
-                else:
-                    gram_matrix, _ = read_lib_svm(path + d + "__" + a + "_" + str(i) + ".gram")
-                    gram_matrix = normalize_gram_matrix(gram_matrix)
-                    classes = read_classes(d)
-                    gram_matrices.append(gram_matrix)
-
-            if gram_matrices != []:
-                acc, acc_train, s_1 = kernel_svm_evaluation(gram_matrices, classes, num_repetitions=10)
-                print(a, d, acc, acc_train, s_1)
+    # for a in algorithms:
+    #     for d, use_labels in dataset:
+    #         gram_matrices = []
+    #         for i in range(0,6):
+    #             if not pth.exists(path + d + "__" + a + "_" + str(i) + ".gram"):
+    #                 continue
+    #             else:
+    #                 gram_matrix, _ = read_lib_svm(path + d + "__" + a + "_" + str(i) + ".gram")
+    #                 gram_matrix = normalize_gram_matrix(gram_matrix)
+    #                 classes = read_classes(d)
+    #                 gram_matrices.append(gram_matrix)
+    #
+    #         if gram_matrices != []:
+    #             acc, acc_train, s_1 = kernel_svm_evaluation(gram_matrices, classes, num_repetitions=10)
+    #             print(a, d, acc, acc_train, s_1)
 
 
     path = "../svm/SVM/src/EXPSPARSE/"
     for name in ["Yeast", "YeastH", "UACC257", "UACC257H", "OVCAR-8", "OVCAR-8H"]:
+        # for algorithm in ["WL", "LWL2", "LWLP2"]:
         for algorithm in ["WL", "LWL2", "LWLP2"]:
 
             # Collect feature matrices over all iterations
@@ -70,13 +71,6 @@ def main():
 
                 acc, s_1 = linear_svm_evaluation(all_feature_matrices, classes, num_repetitions=3, all_std=False)
                 print(name, algorithm, acc, s_1)
-
-
-
-
-
-
-
 
 
 if __name__ == "__main__":
