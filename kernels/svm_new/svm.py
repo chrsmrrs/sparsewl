@@ -45,7 +45,7 @@ def main():
     path = "../svm/SVM/src/EXPSPARSE/"
     for name in ["Yeast", "YeastH", "UACC257", "UACC257H", "OVCAR-8", "OVCAR-8H"]:
         # for algorithm in ["WL", "LWL2", "LWLP2"]:
-        for algorithm in ["WL", "LWL2", "LWLP2"]:
+        for algorithm in ["LWLP2", "LWL2", "WL"]:
 
             # Collect feature matrices over all iterations
             all_feature_matrices = []
