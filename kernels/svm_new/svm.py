@@ -69,8 +69,8 @@ def main():
 
                 all_feature_matrices.append(feature_vector)
 
-                acc, s_1 = linear_svm_evaluation(all_feature_matrices, classes, num_repetitions=3, all_std=False)
-                print(name, algorithm, acc, s_1)
+            acc, s_1 = linear_svm_evaluation(all_feature_matrices, classes, num_repetitions=3, all_std=False)
+            print(name, algorithm, acc, s_1)
 
 
 if __name__ == "__main__":
