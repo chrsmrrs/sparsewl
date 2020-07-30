@@ -5,7 +5,7 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import train_test_split
 from sklearn.svm import LinearSVC
 from auxiliarymethods.kernel_evaluation import kernel_svm_evaluation, linear_svm_evaluation
-from auxiliarymethods.auxiliary_methods import read_lib_svm, normalize_gram_matrix
+from auxiliarymethods.auxiliary_methods import read_lib_svm, normalize_gram_matrix, normalize_feature_vector
 import os.path
 from os import path as pth
 
@@ -66,6 +66,9 @@ def main():
                 feature_vector = sp.coo_matrix((feature_vector[:, 2], (feature_vector[:, 0], feature_vector[:, 1])),
                                                shape=(xmax + 1, ymax + 1))
                 feature_vector = feature_vector.tocsr()
+
+                # TODO: remove
+                feature_vector = normalize_feature_vector(feature_vector)
 
                 all_feature_matrices.append(feature_vector)
 
