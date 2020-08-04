@@ -45,12 +45,12 @@ def main():
     path = "../svm/SVM/src/EXPSPARSE/"
     for name in ["Yeast", "YeastH", "UACC257", "UACC257H", "OVCAR-8", "OVCAR-8H"]:
         # for algorithm in ["WL", "LWL2", "LWLP2"]:
-        for algorithm in ["LWLP2", "LWL2", "WL"]:
+        for algorithm in ["LWLP2", "WL"]:
 
             # Collect feature matrices over all iterations
             all_feature_matrices = []
             classes = read_classes(name)
-            for i in range(3, 4):
+            for i in range(2, 3):
                 # Load feature matrices.
                 feature_vector = pd.read_csv(path + name + "__" + algorithm + "_" + str(i), header=1,
                                              delimiter=" ").to_numpy()
@@ -68,7 +68,7 @@ def main():
                 feature_vector = feature_vector.tocsr()
 
                 # TODO: remove
-                feature_vector = normalize_feature_vector(feature_vector)
+                #feature_vector = normalize_feature_vector(feature_vector)
 
                 all_feature_matrices.append(feature_vector)
 
