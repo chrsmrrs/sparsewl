@@ -25,7 +25,7 @@ using namespace std;
 //}
 
 int main() {
-
+    /*
     // k = 2.
     {
         vector<pair<string, bool>> datasets = {make_pair("ENZYMES", true), make_pair("IMDB-BINARY", false),
@@ -418,10 +418,10 @@ int main() {
             }
         }
     }
+    */
 
     // Larger Datasets.
-    //vector<string> d = {"Yeast", "YeastH", "UACC257", "UACC257H", "OVCAR-8", "OVCAR-8H"};
-    vector<string> d = {"Yeast"};
+    vector<string> d = {"Yeast", "YeastH", "UACC257", "UACC257H", "OVCAR-8", "OVCAR-8H"};
     for (auto &ds: d) {
         bool use_labels = true;
         bool use_edge_labels = true;
