@@ -50,7 +50,7 @@ def main():
             # Collect feature matrices over all iterations
             all_feature_matrices = []
             classes = read_classes(name)
-            for i in range(0, 3):
+            for i in range(0, 6):
                 # Load feature matrices.
                 feature_vector = pd.read_csv(path + name + "__" + algorithm + "_" + str(i), header=1,
                                              delimiter=" ").to_numpy()
