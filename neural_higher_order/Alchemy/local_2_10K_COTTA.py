@@ -161,7 +161,7 @@ class NetGIN(torch.nn.Module):
         self.mlp_6 = Sequential(Linear(2 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                                 torch.nn.BatchNorm1d(dim), ReLU())
 
-        self.mlp_x = Sequential(Linear(1 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
+        self.mlp_x = Sequential(Linear(1 * 83, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                                 torch.nn.BatchNorm1d(dim), ReLU())
 
         self.set2set = Set2Set(1 * dim, processing_steps=6)
