@@ -161,8 +161,7 @@ class NetGIN(torch.nn.Module):
         self.mlp_6 = Sequential(Linear(2 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                                 torch.nn.BatchNorm1d(dim), ReLU())
 
-        self.mlp_x = Sequential(Linear(1 * 83, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
-                                torch.nn.BatchNorm1d(dim), ReLU())
+
 
         self.set2set = Set2Set(1 * dim, processing_steps=6)
         self.fc1 = Linear(2 * dim, dim)
@@ -171,12 +170,10 @@ class NetGIN(torch.nn.Module):
     def forward(self, data):
         x = data.x
 
-        x = self.mlp_x(x)
+        x_1 = F.relu(self.conv1_1(x, data.edge_index_1))
+        x_2 = F.relu(self.conv1_2(x, data.edge_index_2))
+        x_1_r = self.mlp_1(torch.cat([x_1, x_2], dim=-1))
 
-        # x_1 = F.relu(self.conv1_1(x, data.edge_index_1))
-        # x_2 = F.relu(self.conv1_2(x, data.edge_index_2))
-        # x_1_r = self.mlp_1(torch.cat([x_1, x_2], dim=-1))
-        #
         # x_1 = F.relu(self.conv2_1(x_1_r, data.edge_index_1))
         # x_2 = F.relu(self.conv2_2(x_1_r, data.edge_index_2))
         # x_2_r = self.mlp_2(torch.cat([x_1, x_2], dim=-1))
@@ -197,6 +194,7 @@ class NetGIN(torch.nn.Module):
         # x_2 = F.relu(self.conv6_2(x_5_r, data.edge_index_2))
         # x_6_r = self.mlp_6(torch.cat([x_1, x_2], dim=-1))
 
+        x = x_1_r
 
         x = self.set2set(x, data.batch)
 
