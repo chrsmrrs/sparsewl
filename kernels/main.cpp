@@ -446,8 +446,8 @@ int main() {
                     gm = wl.compute_gram_matrix(i, use_labels, use_edge_labels, "local", true, false);
                 }
 
-                AuxiliaryMethods::write_sparse_gram_matrix(gm, "./svm/SVM/src/EXP/" + ds +
-                                                               "__" + kernel + "_" + to_string(i));
+                AuxiliaryMethods::write_sparse_gram_matrix(gm, "./svm/SVM/src/EXPSPARSE/" + ds +
+                                                              "__" + kernel + "_" + to_string(i));
             }
         }
 
@@ -474,7 +474,7 @@ int main() {
 //                }
 //
 //                AuxiliaryMethods::write_sparse_gram_matrix(gm, "./svm/SVM/src/EXPSPARSE/" + ds +
-//                                                               "__" + kernel + "_" + to_string(i));
+////                                                               "__" + kernel + "_" + to_string(i));
 //            }
 //        }
 //
