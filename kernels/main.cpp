@@ -446,63 +446,63 @@ int main() {
                     gm = wl.compute_gram_matrix(i, use_labels, use_edge_labels, "local", true, false);
                 }
 
-                AuxiliaryMethods::write_sparse_gram_matrix(gm, "/svm/SVM/src/EXP/" + ds +
+                AuxiliaryMethods::write_sparse_gram_matrix(gm, "./svm/SVM/src/EXP/" + ds +
                                                                "__" + kernel + "_" + to_string(i));
             }
         }
 
-        {
-            string kernel = "LWLP2";
-            GraphDatabase gdb = AuxiliaryMethods::read_graph_txt_file(ds);
-            gdb.erase(gdb.begin() + 0);
-            vector<int> classes = AuxiliaryMethods::read_classes(ds);
-
-            GenerateTwo::GenerateTwo wl(gdb);
-            for (uint i = 0; i <= 5; ++i) {
-                cout << i << endl;
-                cout << ds + "__" + kernel + "_" + to_string(i) << endl;
-                GramMatrix gm;
-
-                if (i == 5) {
-                    high_resolution_clock::time_point t1 = high_resolution_clock::now();
-                    gm = wl.compute_gram_matrix(i, use_labels, use_edge_labels, "localp", true, false);
-                    high_resolution_clock::time_point t2 = high_resolution_clock::now();
-                    auto duration = duration_cast<seconds>(t2 - t1).count();
-                    cout << duration << endl;
-                } else {
-                    gm = wl.compute_gram_matrix(i, use_labels, use_edge_labels, "localp", true, false);
-                }
-
-                AuxiliaryMethods::write_sparse_gram_matrix(gm, "./svm/SVM/src/EXPSPARSE/" + ds +
-                                                               "__" + kernel + "_" + to_string(i));
-            }
-        }
-
-        {
-            string kernel = "WL";
-            GraphDatabase gdb = AuxiliaryMethods::read_graph_txt_file(ds);
-            gdb.erase(gdb.begin() + 0);
-            vector<int> classes = AuxiliaryMethods::read_classes(ds);
-
-            ColorRefinement::ColorRefinementKernel wl(gdb);
-            for (uint i = 0; i <= 5; ++i) {
-                cout << ds + "__" + kernel + "_" + to_string(i) << endl;
-                GramMatrix gm;
-
-                if (i == 5) {
-                    high_resolution_clock::time_point t1 = high_resolution_clock::now();
-                    gm = wl.compute_gram_matrix(i, use_labels, use_edge_labels, false, false);
-                    high_resolution_clock::time_point t2 = high_resolution_clock::now();
-                    auto duration = duration_cast<seconds>(t2 - t1).count();
-                    cout << duration << endl;
-                } else {
-                    gm = wl.compute_gram_matrix(i, use_labels, use_edge_labels, false, false);
-                }
-
-                AuxiliaryMethods::write_sparse_gram_matrix(gm, "./svm/SVM/src/EXPSPARSE/" + ds +
-                                                               "__" + kernel + "_" + to_string(i));
-            }
-        }
+//        {
+//            string kernel = "LWLP2";
+//            GraphDatabase gdb = AuxiliaryMethods::read_graph_txt_file(ds);
+//            gdb.erase(gdb.begin() + 0);
+//            vector<int> classes = AuxiliaryMethods::read_classes(ds);
+//
+//            GenerateTwo::GenerateTwo wl(gdb);
+//            for (uint i = 0; i <= 5; ++i) {
+//                cout << i << endl;
+//                cout << ds + "__" + kernel + "_" + to_string(i) << endl;
+//                GramMatrix gm;
+//
+//                if (i == 5) {
+//                    high_resolution_clock::time_point t1 = high_resolution_clock::now();
+//                    gm = wl.compute_gram_matrix(i, use_labels, use_edge_labels, "localp", true, false);
+//                    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+//                    auto duration = duration_cast<seconds>(t2 - t1).count();
+//                    cout << duration << endl;
+//                } else {
+//                    gm = wl.compute_gram_matrix(i, use_labels, use_edge_labels, "localp", true, false);
+//                }
+//
+//                AuxiliaryMethods::write_sparse_gram_matrix(gm, "./svm/SVM/src/EXPSPARSE/" + ds +
+//                                                               "__" + kernel + "_" + to_string(i));
+//            }
+//        }
+//
+//        {
+//            string kernel = "WL";
+//            GraphDatabase gdb = AuxiliaryMethods::read_graph_txt_file(ds);
+//            gdb.erase(gdb.begin() + 0);
+//            vector<int> classes = AuxiliaryMethods::read_classes(ds);
+//
+//            ColorRefinement::ColorRefinementKernel wl(gdb);
+//            for (uint i = 0; i <= 5; ++i) {
+//                cout << ds + "__" + kernel + "_" + to_string(i) << endl;
+//                GramMatrix gm;
+//
+//                if (i == 5) {
+//                    high_resolution_clock::time_point t1 = high_resolution_clock::now();
+//                    gm = wl.compute_gram_matrix(i, use_labels, use_edge_labels, false, false);
+//                    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+//                    auto duration = duration_cast<seconds>(t2 - t1).count();
+//                    cout << duration << endl;
+//                } else {
+//                    gm = wl.compute_gram_matrix(i, use_labels, use_edge_labels, false, false);
+//                }
+//
+//                AuxiliaryMethods::write_sparse_gram_matrix(gm, "./svm/SVM/src/EXPSPARSE/" + ds +
+//                                                               "__" + kernel + "_" + to_string(i));
+//            }
+//        }
     }
 
     return 0;
