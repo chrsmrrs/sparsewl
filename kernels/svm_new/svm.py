@@ -18,8 +18,6 @@ def read_classes(ds_name):
 
 
 def main():
-
-
     path = "../svm/SVM/src/EXP/"
     dataset = [["ENZYMES", True], ["IMDB-BINARY", False], ["IMDB-MULTI", False], ["NCI1", True], ["NCI109", True], ["PROTEINS", True],
                ["PTC_FM", True], ["REDDIT-BINARY", False]]
