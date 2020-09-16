@@ -30,6 +30,9 @@ def main():
     # Larger datasets with edge labels.
     dataset = [["Yeast", True], ["YeastH", True], ["UACC257", True], ["UACC257H", True], ["OVCAR-8", True],
                ["OVCAR-8H", True]]
+    dataset = [["YeastH", True], ["UACC257", True], ["UACC257H", True], ["OVCAR-8", True],
+               ["OVCAR-8H", True]]
+
 
     for d, use_labels in dataset:
         dp.get_dataset(d)
