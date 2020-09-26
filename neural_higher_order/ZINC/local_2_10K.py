@@ -192,7 +192,7 @@ for _ in range(5):
     model = NetGIN(256).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
-                                                           factor=0.8, patience=10,
+                                                           factor=0.5, patience=5,
                                                            min_lr=0.0000001)
 
 
