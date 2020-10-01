@@ -1,4 +1,4 @@
-# sparsewl
+# Weisfeiler and Leman go sparse
 Code for "_Weisfeiler and Leman go sparse: Towards scalable higher-order graph embeddings_" (NeurIPS 2020).
 
 ## Requirements
