@@ -1,41 +1,41 @@
 # sparsewl
-Code for "Weisfeiler and Leman go sparse: Towards scalable higher-order graph embeddings"
+Code for "_Weisfeiler and Leman go sparse: Towards scalable higher-order graph embeddings_" (NeurIPS 2020).
 
 ## Requirements
-- Python 3.8
-- eigen3
-- numpy
-- pandas
-- scipy
-- sklearn
-- torch 1.5
-- torch-geometric
-- pybind11
-- libsvm
+- `Python 3.8`
+- `eigen3`
+- `numpy`
+- `pandas`
+- `scipy`
+- `sklearn`
+- `torch 1.5`
+- `torch-geometric 1.5`
+- `pybind11`
+- `libsvm`
 
 All results in the paper and the appendix can be reproduced by the following the steps below. 
 
-## Reproducing the kernel experiments (Tables 1, 3b, Table 5, Table 5, Table 9, Table 10)
+## Reproducing the kernel experiments (precomputed Gram matrices) (Tables 1, 2a, 3a, 5, 6, 8, 9)
+- `cd kernels`
+- Download datasets from `www.graphlearning.io`,  and place the unzipped folders into `kernels/datasets`
+- Download `https://www.chrsmrrs.com/wl_goes_sparse_matrices/EXP.zip` and `https://www.chrsmrrs.com/wl_goes_sparse_matrices/EXPSPARSE.zip` and unzip them into `kernels/svm/GM`
+- `cd svm`
+- Run `python svm.py`
+
+## Reproducing the kernel experiments from scratch (Tables 1, 2a, 3a, 5, 6, 8, 9)
 - `cd kernels`
 - Download datasets from `www.graphlearning.io`,  and place the unzipped folders into `kernels/datasets`
 - Run `g++ main.cpp src/*cpp -std=c++11 -o local -O2`
 - Run `./local` (running times will be outputted on the screen, too)
+- `cd svm`
+- Run `python svm.py`
 
-### Setting up the kernel SVM
-- `cd svm/SVM/src`
-- Adjust the path to libsvm in line 129 of `svm/SVM/src/cli/AccuracyTest.java`
-- Run `javac Main`
-- Run `java Main`
 
-### Setting up the linear SVM (for larger datasets)
-- `cd linear_svm`
-- Run `python linear_svm.py`
-
-## Reproducing the neural baselines (for kernel experiments, Table 1, Table 5, Table 6)
+## Reproducing the neural baselines (Tables 1, 5)
 - `cd neural baselines`
 - Run `python main_gnn.py`
 
-## Reproducing the neural higher-order results (Table 2b, Figure 2abc, 3b, Table 8)
+## Reproducing the neural higher-order results (Table 2b, Figure 2abc, 3b, Table 7)
 You first need to build the Python package:
 - `cd neural_higher_order/preprocessing`
 - You might need to adjust the path to `pybind` in `preprocessing.cpp`, then run 

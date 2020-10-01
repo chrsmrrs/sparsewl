@@ -63,7 +63,7 @@ def main():
                 feature_vector = sp.coo_matrix((feature_vector[:, 2], (feature_vector[:, 0], feature_vector[:, 1])),
                                                shape=(xmax + 1, ymax + 1))
                 feature_vector = feature_vector.tocsr()
-                
+
                 all_feature_matrices.append(feature_vector)
 
             acc, s_1 = linear_svm_evaluation(all_feature_matrices, classes, num_repetitions=3, all_std=False)
