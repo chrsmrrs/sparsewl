@@ -24,7 +24,6 @@ def main():
         print(d + " " + "GIN " + str(acc) + " " + str(s_1) + " " + str(s_2))
         results.append(d + " " + "GIN " + str(acc) + " " + str(s_1) + " " + str(s_2))
 
-
     num_reps = 3
 
     # Larger datasets with edge labels.
@@ -32,7 +31,6 @@ def main():
                ["OVCAR-8H", True]]
     dataset = [["YeastH", True], ["UACC257", True], ["UACC257H", True], ["OVCAR-8", True],
                ["OVCAR-8H", True]]
-
 
     for d, use_labels in dataset:
         dp.get_dataset(d)
