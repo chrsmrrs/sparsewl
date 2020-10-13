@@ -25,11 +25,11 @@ class ZINC(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        return "zinc10kcl"
+        return "zinc10kclg"
 
     @property
     def processed_file_names(self):
-        return "zinc10kcl"
+        return "zinc10kclg"
 
     def download(self):
         pass
