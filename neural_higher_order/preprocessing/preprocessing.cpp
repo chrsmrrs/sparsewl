@@ -2426,7 +2426,7 @@ PYBIND11_MODULE(preprocessing, m) {
     m.def("get_all_node_labels_allchem_3", &get_all_node_labels_allchem_3);
     m.def("get_all_edge_labels_ZINC_1", &get_all_edge_labels_ZINC_1);
     m.def("get_all_edge_labels_alchem_1", &get_all_edge_labels_alchem_1);
-    m.def("get_all_edge_labelslg_ZINC_1", &get_all_edge_labelslg_ZINC_1);
+    m.def("get_all_edge_labelslg_ZINC_1", &get_all_edge_labels_ZINC_1);
     m.def("get_all_attributes", &get_all_attributes);
     m.def("read_classes", &read_classes);
     m.def("read_targets", &read_targets);
