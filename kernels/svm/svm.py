@@ -18,7 +18,33 @@ def read_classes(ds_name):
 
 
 def main():
-    path = "./svm/GM/EXP/"
+
+    path = "./GM/EXP/"
+    dataset = [["IMDB-BINARY", False], ["IMDB-MULTI", False], ["NCI1", True],
+               ["PROTEINS", True],
+               ["PTC_FM", True]]
+    algorithms = ["LWLC2"]
+
+    for a in algorithms:
+        for d, use_labels in dataset:
+            gram_matrices = []
+            for i in range(0,6):
+                if not pth.exists(path + d + "__" + a + "_" + str(i) + ".gram"):
+                    continue
+                else:
+                    gram_matrix, _ = read_lib_svm(path + d + "__" + a + "_" + str(i) + ".gram")
+                    gram_matrix = normalize_gram_matrix(gram_matrix)
+                    classes = read_classes(d)
+                    gram_matrices.append(gram_matrix)
+
+            if gram_matrices != []:
+                acc, acc_train, s_1 = kernel_svm_evaluation(gram_matrices, classes, num_repetitions=10)
+                print(a, d, acc, acc_train, s_1)
+
+    exit()
+    
+
+    path = "./GM/EXP/"
     dataset = [["ENZYMES", True], ["IMDB-BINARY", False], ["IMDB-MULTI", False], ["NCI1", True], ["NCI109", True], ["PROTEINS", True],
                ["PTC_FM", True], ["REDDIT-BINARY", False]]
     algorithms = ["WL1", "GR", "SP", "WLOA", "LWL2", "LWLP2", "WL2", "DWL2", "LWL3", "LWLP3", "WL3", "DWL3"]
@@ -40,7 +66,9 @@ def main():
                 print(a, d, acc, acc_train, s_1)
 
 
-    path = "./svm/GM/EXPSPARSE/"
+
+
+    path = "./GM/EXPSPARSE/"
     for name in ["Yeast", "YeastH", "UACC257", "UACC257H", "OVCAR-8", "OVCAR-8H"]:
         for algorithm in ["LWL2", "LWLP2", "WL"]:
 

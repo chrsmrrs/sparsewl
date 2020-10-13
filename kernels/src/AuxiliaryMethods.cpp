@@ -36,7 +36,7 @@ namespace AuxiliaryMethods {
     GraphDatabase read_graph_txt_file(string data_set_name) {
         string line;
 
-        string path = "/home/morris/WWW/graphkerneldatasets/DS_all/";
+        string path = "./datasets/";
 
         vector<uint> graph_indicator;
         ifstream myfile(
@@ -213,7 +213,7 @@ namespace AuxiliaryMethods {
     vector<int> read_classes(string data_set_name) {
         string line;
         
-        string path = "/home/morris/WWW/graphkerneldatasets/DS_all/";
+        string path = "./datasets/";
         vector<int> classes;
 
         ifstream myfile(
@@ -294,12 +294,11 @@ namespace AuxiliaryMethods {
 
         string path = ".";
 
-        ofstream file(path + filename);
+
+        ofstream file(filename);
 
         if (file.is_open()) {
             for (int i = 0; i < size; i++) {
-
-
                 file << classes[i] << " 0:" << (i + 1);
                 for (int c = 0; c < size; c++) {
                     file << " " << (c + 1) << ":" << norm(i, c);

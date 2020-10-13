@@ -22,6 +22,7 @@ namespace GenerateTwo {
                                        const bool simple, const bool compute_gram);
 
         Graph generate_local_graph(const Graph &g, const bool use_labels, const bool use_edge_labels);
+        Graph generate_local_graph_connected(const Graph &g, const bool use_labels, const bool use_edge_labels);
 
         GramMatrix generate_local_sparse_am(const Graph &g, const bool use_labels, const bool use_edge_labels);
         vector<int> get_edge_labels(const Graph &g, const bool use_labels, const bool use_edge_labels);

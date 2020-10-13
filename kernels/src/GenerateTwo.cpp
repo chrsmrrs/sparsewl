@@ -14,7 +14,7 @@ namespace GenerateTwo {
     GenerateTwo::compute_gram_matrix(const uint num_iterations, const bool use_labels, const bool use_edge_labels,
                                      const string algorithm,
                                      const bool simple, const bool compute_gram) {
-        vector<ColorCounter> color_counters;
+        vector <ColorCounter> color_counters;
         color_counters.reserve(m_graph_database.size());
 
         // Compute labels for each graph in graph database.
@@ -28,7 +28,7 @@ namespace GenerateTwo {
         }
 
         size_t num_graphs = m_graph_database.size();
-        vector<S> nonzero_compenents;
+        vector <S> nonzero_compenents;
 
         // Compute feature vectors.
         ColorCounter c;
@@ -72,7 +72,7 @@ namespace GenerateTwo {
 
         size_t num_nodes = tuple_graph.get_num_nodes();
 
-        unordered_map<Node, TwoTuple> node_to_two_tuple;
+        unordered_map <Node, TwoTuple> node_to_two_tuple;
         if (algorithm == "localp") {
             node_to_two_tuple = tuple_graph.get_node_to_two_tuple();
         }
@@ -192,10 +192,10 @@ namespace GenerateTwo {
                 // New color of node v.
                 Label new_color;
 
-                vector<vector<Label>> set_m_local;
-                vector<vector<Label>> set_m_global;
-                unordered_map<uint, uint> id_to_position_local;
-                unordered_map<uint, uint> id_to_position_global;
+                vector <vector<Label>> set_m_local;
+                vector <vector<Label>> set_m_global;
+                unordered_map <uint, uint> id_to_position_local;
+                unordered_map <uint, uint> id_to_position_global;
 
                 uint dl = 0;
                 uint dg = 0;
@@ -377,9 +377,11 @@ namespace GenerateTwo {
             tuple_graph = generate_global_graph(g, use_labels, use_edge_labels);
         } else if (algorithm == "malkin") {
             tuple_graph = generate_global_graph_malkin(g, use_labels, use_edge_labels);
+        } else if (algorithm == "localc") {
+            tuple_graph = generate_local_graph_connected(g, use_labels, use_edge_labels);
         }
 
-        unordered_map<Node, TwoTuple> node_to_two_tuple;
+        unordered_map <Node, TwoTuple> node_to_two_tuple;
         if (algorithm == "localp") {
             node_to_two_tuple = tuple_graph.get_node_to_two_tuple();
         }
@@ -501,8 +503,8 @@ namespace GenerateTwo {
                 // New color of node v.
                 Label new_color;
 
-                vector<vector<Label>> set_m_local;
-                vector<vector<Label>> set_m_global;
+                vector <vector<Label>> set_m_local;
+                vector <vector<Label>> set_m_global;
 
                 set_m_local.push_back(vector<Label>());
                 set_m_local.push_back(vector<Label>());
@@ -678,14 +680,14 @@ namespace GenerateTwo {
         Graph two_tuple_graph(false);
 
         // Maps node in two set graph to corresponding two tuple.
-        unordered_map<Node, TwoTuple> node_to_two_tuple;
+        unordered_map <Node, TwoTuple> node_to_two_tuple;
         // Inverse of the above map.
-        unordered_map<TwoTuple, Node> two_tuple_to_node;
+        unordered_map <TwoTuple, Node> two_tuple_to_node;
         // Manages edges labels.
-        unordered_map<Edge, uint> edge_type;
+        unordered_map <Edge, uint> edge_type;
         // Manages vertex ids
-        unordered_map<Edge, uint> vertex_id;
-        unordered_map<Edge, uint> local;
+        unordered_map <Edge, uint> vertex_id;
+        unordered_map <Edge, uint> local;
 
         // Create a node for each two set.
         Labels labels;
@@ -720,7 +722,7 @@ namespace GenerateTwo {
                 if (g.has_edge(i, j)) {
                     if (use_edge_labels) {
                         auto s = edge_labels.find(make_tuple(i, j));
-                        c = AuxiliaryMethods::pairing(3,s->second);
+                        c = AuxiliaryMethods::pairing(3, s->second);
                     } else {
                         c = 3;
                     }
@@ -772,20 +774,132 @@ namespace GenerateTwo {
         return two_tuple_graph;
     }
 
-    GramMatrix GenerateTwo::generate_local_sparse_am(const Graph &g, const bool use_labels, const bool use_edge_labels) {
+    Graph
+    GenerateTwo::generate_local_graph_connected(const Graph &g, const bool use_labels, const bool use_edge_labels) {
         size_t num_nodes = g.get_num_nodes();
         // New graph to be generated.
         Graph two_tuple_graph(false);
 
         // Maps node in two set graph to corresponding two tuple.
-        unordered_map<Node, TwoTuple> node_to_two_tuple;
+        unordered_map <Node, TwoTuple> node_to_two_tuple;
         // Inverse of the above map.
-        unordered_map<TwoTuple, Node> two_tuple_to_node;
+        unordered_map <TwoTuple, Node> two_tuple_to_node;
         // Manages edges labels.
-        unordered_map<Edge, uint> edge_type;
+        unordered_map <Edge, uint> edge_type;
         // Manages vertex ids
-        unordered_map<Edge, uint> vertex_id;
-        unordered_map<Edge, uint> local;
+        unordered_map <Edge, uint> vertex_id;
+        unordered_map <Edge, uint> local;
+
+        // Create a node for each two set.
+        Labels labels;
+        Labels tuple_labels;
+        if (use_labels) {
+            labels = g.get_labels();
+        }
+
+        EdgeLabels edge_labels;
+        if (use_edge_labels) {
+            edge_labels = g.get_edge_labels();
+        }
+
+        Node num_two_tuples = 0;
+        for (Node i = 0; i < num_nodes; ++i) {
+            for (Node j = 0; j < num_nodes; ++j) {
+                if (g.has_edge(i, j)) {
+
+                    two_tuple_graph.add_node();
+
+                    // Map each pair to node in two set graph and also inverse.
+                    node_to_two_tuple.insert({{num_two_tuples, make_tuple(i, j)}});
+                    two_tuple_to_node.insert({{make_tuple(i, j), num_two_tuples}});
+                    num_two_tuples++;
+
+                    Label c_i = 1;
+                    Label c_j = 2;
+                    if (use_labels) {
+                        c_i = AuxiliaryMethods::pairing(labels[i] + 1, c_i);
+                        c_j = AuxiliaryMethods::pairing(labels[j] + 1, c_j);
+                    }
+
+                    Label c;
+                    if (g.has_edge(i, j)) {
+                        if (use_edge_labels) {
+                            auto s = edge_labels.find(make_tuple(i, j));
+                            c = AuxiliaryMethods::pairing(3, s->second);
+                        } else {
+                            c = 3;
+                        }
+                    } else if (i == j) {
+                        c = 1;
+                    } else {
+                        c = 2;
+                    }
+
+                    Label new_color = AuxiliaryMethods::pairing(AuxiliaryMethods::pairing(c_i, c_j), c);
+                    tuple_labels.push_back(new_color);
+                }
+            }
+        }
+
+
+        for (Node i = 0; i < num_two_tuples; ++i) {
+            // Get nodes of original graph corresponding to two tuple i.
+            TwoTuple p = node_to_two_tuple.find(i)->second;
+            Node v = std::get<0>(p);
+            Node w = std::get<1>(p);
+
+
+
+            // Exchange first node.
+            Nodes v_neighbors = g.get_neighbours(v);
+            for (Node v_n: v_neighbors) {
+                if (g.has_edge(v_n, w)) {
+                    unordered_map<TwoTuple, Node>::const_iterator t = two_tuple_to_node.find(make_tuple(v_n, w));
+                    two_tuple_graph.add_edge(i, t->second);
+
+                    edge_type.insert({{make_tuple(i, t->second), 1}});
+                    vertex_id.insert({{make_tuple(i, t->second), v_n}});
+                    local.insert({{make_tuple(i, t->second), 1}});
+                }
+            }
+
+            // Exchange second node.
+            Nodes w_neighbors = g.get_neighbours(w);
+            for (Node w_n: w_neighbors) {
+                if (g.has_edge(v, w_n)) {
+                    unordered_map<TwoTuple, Node>::const_iterator t = two_tuple_to_node.find(make_tuple(v, w_n));
+                    two_tuple_graph.add_edge(i, t->second);
+                    edge_type.insert({{make_tuple(i, t->second), 2}});
+                    vertex_id.insert({{make_tuple(i, t->second), w_n}});
+                    local.insert({{make_tuple(i, t->second), 1}});
+                }
+            }
+        }
+
+        two_tuple_graph.set_edge_labels(edge_type);
+        two_tuple_graph.set_labels(tuple_labels);
+        two_tuple_graph.set_vertex_id(vertex_id);
+        two_tuple_graph.set_local(local);
+        two_tuple_graph.set_node_to_two_tuple(node_to_two_tuple);
+
+        return two_tuple_graph;
+    }
+
+    GramMatrix
+    GenerateTwo::generate_local_sparse_am(const Graph &g, const bool use_labels, const bool use_edge_labels) {
+        size_t num_nodes = g.get_num_nodes();
+        // New graph to be generated.
+        Graph two_tuple_graph(false);
+
+        // Maps node in two set graph to corresponding two tuple.
+        unordered_map <Node, TwoTuple> node_to_two_tuple;
+        // Inverse of the above map.
+        unordered_map <TwoTuple, Node> two_tuple_to_node;
+        // Manages edges labels.
+        unordered_map <Edge, uint> edge_type;
+        // Manages vertex ids
+        unordered_map <Edge, uint> vertex_id;
+        unordered_map <Edge, uint> local;
 
         // Create a node for each two set.
         Labels labels;
@@ -820,7 +934,7 @@ namespace GenerateTwo {
                 if (g.has_edge(i, j)) {
                     if (use_edge_labels) {
                         auto s = edge_labels.find(make_tuple(i, j));
-                        c = AuxiliaryMethods::pairing(3,s->second);
+                        c = AuxiliaryMethods::pairing(3, s->second);
                     } else {
                         c = 3;
                     }
@@ -836,8 +950,7 @@ namespace GenerateTwo {
         }
 
         size_t num_graphs = m_graph_database.size();
-        vector<S> nonzero_compenents;
-
+        vector <S> nonzero_compenents;
 
 
         for (Node i = 0; i < num_two_tuples; ++i) {
@@ -891,14 +1004,14 @@ namespace GenerateTwo {
         Graph two_tuple_graph(false);
 
         // Maps node in two set graph to corresponding two tuple.
-        unordered_map<Node, TwoTuple> node_to_two_tuple;
+        unordered_map <Node, TwoTuple> node_to_two_tuple;
         // Inverse of the above map.
-        unordered_map<TwoTuple, Node> two_tuple_to_node;
+        unordered_map <TwoTuple, Node> two_tuple_to_node;
         // Manages edges labels.
-        unordered_map<Edge, uint> edge_type;
+        unordered_map <Edge, uint> edge_type;
         // Manages vertex ids
-        unordered_map<Edge, uint> vertex_id;
-        unordered_map<Edge, uint> local;
+        unordered_map <Edge, uint> vertex_id;
+        unordered_map <Edge, uint> local;
 
         // Create a node for each two set.
         Labels labels;
@@ -933,7 +1046,7 @@ namespace GenerateTwo {
                 if (g.has_edge(i, j)) {
                     if (use_edge_labels) {
                         auto s = edge_labels.find(make_tuple(i, j));
-                        c = AuxiliaryMethods::pairing(3,s->second);
+                        c = AuxiliaryMethods::pairing(3, s->second);
                     } else {
                         c = 3;
                     }
@@ -949,7 +1062,7 @@ namespace GenerateTwo {
         }
 
         size_t num_graphs = m_graph_database.size();
-        vector<S> nonzero_compenents;
+        vector <S> nonzero_compenents;
 
         vector<int> edge_types;
 
@@ -995,7 +1108,6 @@ namespace GenerateTwo {
         two_tuple_graph.set_node_to_two_tuple(node_to_two_tuple);
 
 
-
         return edge_types;
     }
 
@@ -1029,7 +1141,7 @@ namespace GenerateTwo {
                 if (g.has_edge(i, j)) {
                     if (use_edge_labels) {
                         auto s = edge_labels.find(make_tuple(i, j));
-                        c = AuxiliaryMethods::pairing(3,s->second);
+                        c = AuxiliaryMethods::pairing(3, s->second);
                     } else {
                         c = 3;
                     }
@@ -1048,21 +1160,20 @@ namespace GenerateTwo {
     }
 
 
-
     Graph GenerateTwo::generate_global_graph(const Graph &g, const bool use_labels, const bool use_edge_labels) {
         size_t num_nodes = g.get_num_nodes();
         // New graph to be generated.
         Graph two_tuple_graph(false);
 
         // Maps node in two set graph to corresponding two tuple.
-        unordered_map<Node, TwoTuple> node_to_two_tuple;
+        unordered_map <Node, TwoTuple> node_to_two_tuple;
         // Inverse of the above map.
-        unordered_map<TwoTuple, Node> two_tuple_to_node;
+        unordered_map <TwoTuple, Node> two_tuple_to_node;
         // Manages edge labels.
-        unordered_map<Edge, uint> edge_type;
+        unordered_map <Edge, uint> edge_type;
         // Manages vertex ids
-        unordered_map<Edge, uint> vertex_id;
-        unordered_map<Edge, uint> local;
+        unordered_map <Edge, uint> vertex_id;
+        unordered_map <Edge, uint> local;
 
         // Create a node for each two set.
         Labels labels;
@@ -1097,7 +1208,7 @@ namespace GenerateTwo {
                 if (g.has_edge(i, j)) {
                     if (use_edge_labels) {
                         auto s = edge_labels.find(make_tuple(i, j));
-                        c = AuxiliaryMethods::pairing(3,s->second);
+                        c = AuxiliaryMethods::pairing(3, s->second);
                     } else {
                         c = 3;
                     }
@@ -1155,14 +1266,14 @@ namespace GenerateTwo {
         Graph two_tuple_graph(false);
 
         // Maps node in two set graph to correponding two set.
-        unordered_map<Node, TwoTuple> node_to_two_tuple;
+        unordered_map <Node, TwoTuple> node_to_two_tuple;
         // Inverse of the above map.
-        unordered_map<TwoTuple, Node> two_tuple_to_node;
+        unordered_map <TwoTuple, Node> two_tuple_to_node;
         // Manages edge labels.
-        unordered_map<Edge, uint> edge_type;
+        unordered_map <Edge, uint> edge_type;
         // Manages vertex ids
-        unordered_map<Edge, uint> vertex_id;
-        unordered_map<Edge, uint> local;
+        unordered_map <Edge, uint> vertex_id;
+        unordered_map <Edge, uint> local;
 
 
         // Create a node for each two set.
@@ -1198,7 +1309,7 @@ namespace GenerateTwo {
                 if (g.has_edge(i, j)) {
                     if (use_edge_labels) {
                         auto s = edge_labels.find(make_tuple(i, j));
-                        c = AuxiliaryMethods::pairing(3,s->second);
+                        c = AuxiliaryMethods::pairing(3, s->second);
                     } else {
                         c = 3;
                     }
