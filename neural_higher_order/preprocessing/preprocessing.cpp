@@ -2312,7 +2312,7 @@ vector <vector<int>> get_all_edge_labels_alchem_1(const bool use_node_labels, co
 
 vector <pair<vector < int>, vector<int>>>
 
-get_all_edge_labels_ZINC_1(const bool use_node_labels, const bool use_edge_labels,
+get_all_edge_labelslg_ZINC_1(const bool use_node_labels, const bool use_edge_labels,
                              const std::vector<int> &indices_train, const std::vector<int> &indices_val,
                              const std::vector<int> &indices_test) {
     GraphDatabase gdb_1 = AuxiliaryMethods::read_graph_txt_file("ZINC_train");
