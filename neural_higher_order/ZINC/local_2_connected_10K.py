@@ -25,11 +25,11 @@ class ZINC(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        return "zinc10kc"
+        return "zinc10kcl"
 
     @property
     def processed_file_names(self):
-        return "zinc10kc"
+        return "zinc10kcl"
 
     def download(self):
         pass
@@ -70,8 +70,8 @@ class ZINC(InMemoryDataset):
         matrices.extend(pre.get_all_matrices_connected("ZINC_test", indices_test))
 
         for i, m in enumerate(matrices):
-            edge_index_1 = torch.tensor(matrices[i][0]).t().contiguous()
-            edge_index_2 = torch.tensor(matrices[i][1]).t().contiguous()
+            edge_index_1 = torch.tensor(matrices[i][0]).t().contiguous().long()
+            edge_index_2 = torch.tensor(matrices[i][1]).t().contiguous().long()
 
             data = Data()
             data.edge_index_1 = edge_index_1
