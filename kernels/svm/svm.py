@@ -20,10 +20,10 @@ def read_classes(ds_name):
 def main():
 
     path = "./GM/EXP/"
-    dataset = [["ENZYMES", True], ["IMDB-BINARY", False], ["IMDB-MULTI", False], ["NCI1", True],
+    dataset = [["ENZYMES", True], ["IMDB-BINARY", False], ["IMDB-MULTI", False],
                ["PROTEINS", True],
-               ["PTC_FM", True]]
-    algorithms = ["LWLPC2"]
+               ["PTC_FM", True], ["NCI1", True]]
+    algorithms = ["LWLC2"]
 
     for a in algorithms:
         for d, use_labels in dataset:

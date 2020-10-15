@@ -25,11 +25,11 @@ class ZINC(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        return "zinc10kclga"
+        return "zinc50kclga"
 
     @property
     def processed_file_names(self):
-        return "zinc10kclga"
+        return "zinc50kclga"
 
     def download(self):
         pass
@@ -41,24 +41,24 @@ class ZINC(InMemoryDataset):
         indices_val = []
         indices_test = []
 
-        infile = open("test.index.txt", "r")
-        for line in infile:
-            indices_test = line.split(",")
-            indices_test = [int(i) for i in indices_test]
+        indices_train = []
+        indices_val = []
 
-        infile = open("val.index.txt", "r")
-        for line in infile:
-            indices_val = line.split(",")
-            indices_val = [int(i) for i in indices_val]
-
-        infile = open("train.index.txt", "r")
+        infile = open("train_50.index.txt", "r")
         for line in infile:
             indices_train = line.split(",")
             indices_train = [int(i) for i in indices_train]
 
-        dp.get_dataset("ZINC_train")
-        dp.get_dataset("ZINC_test")
-        dp.get_dataset("ZINC_val")
+        infile = open("val_50.index.txt", "r")
+        for line in infile:
+            indices_val = line.split(",")
+            indices_val = [int(i) for i in indices_val]
+
+        indices_test = list(range(0, 5000))
+
+        dp.get_dataset("ZINC_train", regression=True)
+        dp.get_dataset("ZINC_test", regression=True)
+        dp.get_dataset("ZINC_val", regression=True)
         node_labels = pre.get_all_node_labels_ZINC_connected(True, True, indices_train, indices_val, indices_test)
 
         targets = pre.read_targets("ZINC_train", indices_train)
@@ -167,7 +167,6 @@ class NetGIN(torch.nn.Module):
         self.bn8 = torch.nn.BatchNorm1d(dim)
         self.mlp_8 = Sequential(Linear(2 * dim, dim), ReLU(), Linear(dim, dim))
 
-
         self.fc1 = Linear(8 * dim, dim)
         self.fc2 = Linear(dim, dim)
         self.fc3 = Linear(dim, dim)
@@ -230,9 +229,9 @@ class NetGIN(torch.nn.Module):
 path = osp.join(osp.dirname(osp.realpath(__file__)), '.', 'data', 'ZINC')
 dataset = ZINC(path, transform=MyTransform())
 
-train_dataset = dataset[0:10000].shuffle()
-val_dataset = dataset[10000:11000].shuffle()
-test_dataset = dataset[11000:].shuffle()
+train_dataset = dataset[0:50000].shuffle()
+test_dataset = dataset[50000:55000].shuffle()
+val_dataset = dataset[55000:].shuffle()
 
 batch_size = 25
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
