@@ -27,11 +27,15 @@ using namespace std;
 int main() {
     // k = 2.
     {
-        vector<pair<string, bool>> datasets = {make_pair("IMDB-BINARY", false),
-                                               make_pair("IMDB-MULTI", false), make_pair("NCI1", true),
-                                               make_pair("PTC_FM", true),
-                                               make_pair("PROTEINS", true)};
 
+
+    vector<pair<string, bool>> datasets = {make_pair("ENZYMES", true)};
+
+//        vector<pair<string, bool>> datasets = {make_pair("IMDB-BINARY", false),make_pair("ENZYMES", true),
+//                                               make_pair("IMDB-MULTI", false), make_pair("NCI1", true),
+//                                               make_pair("PTC_FM", true),
+//                                               make_pair("PROTEINS", true)};
+//
 
         for (auto &d: datasets) {
             {

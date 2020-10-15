@@ -20,7 +20,7 @@ def read_classes(ds_name):
 def main():
 
     path = "./GM/EXP/"
-    dataset = [["IMDB-BINARY", False], ["IMDB-MULTI", False], ["NCI1", True],
+    dataset = [["ENZYMES", True], ["IMDB-BINARY", False], ["IMDB-MULTI", False], ["NCI1", True],
                ["PROTEINS", True],
                ["PTC_FM", True]]
     algorithms = ["LWLPC2"]

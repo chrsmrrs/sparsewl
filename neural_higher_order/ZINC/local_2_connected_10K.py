@@ -192,8 +192,8 @@ for _ in range(5):
     model = NetGIN(256).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
-                                                           factor=0.8, patience=16,
-                                                           min_lr=0.0000001)
+                                                           factor=0.8, patience=25,
+                                                           min_lr=0.00000001)
 
 
     def train():
@@ -223,7 +223,7 @@ for _ in range(5):
 
 
     best_val_error = None
-    for epoch in range(1, 201):
+    for epoch in range(1, 501):
         lr = scheduler.optimizer.param_groups[0]['lr']
         loss = train()
         val_error = test(val_loader)
