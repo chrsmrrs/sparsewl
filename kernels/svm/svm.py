@@ -23,7 +23,7 @@ def main():
     dataset = [["IMDB-BINARY", False], ["IMDB-MULTI", False], ["NCI1", True],
                ["PROTEINS", True],
                ["PTC_FM", True]]
-    algorithms = ["LWLC2"]
+    algorithms = ["LWLPC2"]
 
     for a in algorithms:
         for d, use_labels in dataset:

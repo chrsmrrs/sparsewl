@@ -68,12 +68,14 @@ namespace GenerateTwo {
             tuple_graph = generate_global_graph(g, use_labels, use_edge_labels);
         } else if (algorithm == "malkin") {
             tuple_graph = generate_global_graph_malkin(g, use_labels, use_edge_labels);
+        } else if (algorithm == "localc" or algorithm == "localpc") {
+            tuple_graph = generate_local_graph_connected(g, use_labels, use_edge_labels);
         }
 
         size_t num_nodes = tuple_graph.get_num_nodes();
 
         unordered_map <Node, TwoTuple> node_to_two_tuple;
-        if (algorithm == "localp") {
+        if ((algorithm == "localp" or algorithm == "localpc")) {
             node_to_two_tuple = tuple_graph.get_node_to_two_tuple();
         }
 
@@ -98,7 +100,7 @@ namespace GenerateTwo {
         unordered_map<Node, bool> check_1;
         unordered_map<Node, bool> check_2;
 
-        if (algorithm == "localp" and num_iterations == 0) {
+        if ((algorithm == "localp" or algorithm == "localpc") and num_iterations == 0) {
             for (Node v = 0; v < num_nodes; ++v) {
                 Nodes neighbors(tuple_graph.get_neighbours(v));
 
@@ -164,7 +166,7 @@ namespace GenerateTwo {
         for (Node v = 0; v < num_nodes; ++v) {
             Label new_color = coloring[v];
 
-            if (algorithm == "localp" and num_iterations == 0) {
+            if ((algorithm == "localp" or algorithm == "localpc") and num_iterations == 0) {
                 new_color = AuxiliaryMethods::pairing(coloring[v], color_map_1.find(coloring[v])->second);
                 new_color = AuxiliaryMethods::pairing(new_color, color_map_2.find(coloring[v])->second);
             }
@@ -267,7 +269,7 @@ namespace GenerateTwo {
                 ll = AuxiliaryMethods::pairing(ll, color_map_1.find(coloring[v])->second);
                 ll = AuxiliaryMethods::pairing(ll, color_map_2.find(coloring[v])->second);
 
-                if (algorithm == "localp" and num_iterations == h) {
+                if ((algorithm == "localp" or algorithm == "localpc") and num_iterations == h) {
                     colors_local.push_back(ll);
                 } else {
                     colors_local.push_back(coloring[v]);
@@ -300,7 +302,7 @@ namespace GenerateTwo {
             unordered_map<Node, bool> check_1;
             unordered_map<Node, bool> check_2;
 
-            if (algorithm == "localp" and h == num_iterations) {
+            if ((algorithm == "localp" or algorithm == "localpc") and h == num_iterations) {
                 for (Node v = 0; v < num_nodes; ++v) {
                     Nodes neighbors(tuple_graph.get_neighbours(v));
 
@@ -377,12 +379,12 @@ namespace GenerateTwo {
             tuple_graph = generate_global_graph(g, use_labels, use_edge_labels);
         } else if (algorithm == "malkin") {
             tuple_graph = generate_global_graph_malkin(g, use_labels, use_edge_labels);
-        } else if (algorithm == "localc") {
+        } else if (algorithm == "localc" or algorithm == "localpc") {
             tuple_graph = generate_local_graph_connected(g, use_labels, use_edge_labels);
         }
 
         unordered_map <Node, TwoTuple> node_to_two_tuple;
-        if (algorithm == "localp") {
+        if (algorithm == "localp" or algorithm == "localpc") {
             node_to_two_tuple = tuple_graph.get_node_to_two_tuple();
         }
 
@@ -407,7 +409,7 @@ namespace GenerateTwo {
         unordered_map<Label, bool> check_1;
         unordered_map<Label, bool> check_2;
 
-        if (algorithm == "localp" and num_iterations == 0) {
+        if ((algorithm == "localp" or algorithm == "localpc") and num_iterations == 0) {
             for (Node v = 0; v < num_nodes; ++v) {
                 Nodes neighbors(tuple_graph.get_neighbours(v));
 
@@ -473,7 +475,7 @@ namespace GenerateTwo {
         for (Node v = 0; v < num_nodes; ++v) {
             Label new_color = coloring[v];
 
-            if (algorithm == "localp" and num_iterations == 0) {
+            if ((algorithm == "localp" or algorithm == "localpc") and num_iterations == 0) {
                 new_color = AuxiliaryMethods::pairing(coloring[v], color_map_1.find(coloring[v])->second);
                 new_color = AuxiliaryMethods::pairing(new_color, color_map_2.find(coloring[v])->second);
             }
@@ -520,7 +522,7 @@ namespace GenerateTwo {
                     // Local neighbor.
                     if (type->second == 1) {
                         if (label == 1) {
-                            if (algorithm == "localp" and num_iterations == h) {
+                            if ((algorithm == "localp" or algorithm == "localpc") and num_iterations == h) {
                                 set_m_local[0].push_back(
                                         AuxiliaryMethods::pairing(coloring[n], color_map_1.find(coloring[n])->second));
                             } else {
@@ -528,7 +530,7 @@ namespace GenerateTwo {
                             }
                         }
                         if (label == 2) {
-                            if (algorithm == "localp" and num_iterations == h) {
+                            if ((algorithm == "localp" or algorithm == "localpc") and num_iterations == h) {
                                 set_m_local[1].push_back(
                                         AuxiliaryMethods::pairing(coloring[n], color_map_2.find(coloring[n])->second));
                             } else {
@@ -608,7 +610,7 @@ namespace GenerateTwo {
             unordered_map<Label, bool> check_1;
             unordered_map<Label, bool> check_2;
 
-            if (algorithm == "localp" and num_iterations == h) {
+            if ((algorithm == "localp" or algorithm == "localpc") and num_iterations == h) {
 
                 for (Node v = 0; v < num_nodes; ++v) {
                     Nodes neighbors(tuple_graph.get_neighbours(v));
@@ -805,7 +807,7 @@ namespace GenerateTwo {
         Node num_two_tuples = 0;
         for (Node i = 0; i < num_nodes; ++i) {
             for (Node j = 0; j < num_nodes; ++j) {
-                if (g.has_edge(i, j)) {
+                if (g.has_edge(i, j) or (i==j)) {
 
                     two_tuple_graph.add_node();
 
@@ -853,7 +855,7 @@ namespace GenerateTwo {
             // Exchange first node.
             Nodes v_neighbors = g.get_neighbours(v);
             for (Node v_n: v_neighbors) {
-                if (g.has_edge(v_n, w)) {
+                if (g.has_edge(v_n, w) or (v_n == w)) {
                     unordered_map<TwoTuple, Node>::const_iterator t = two_tuple_to_node.find(make_tuple(v_n, w));
                     two_tuple_graph.add_edge(i, t->second);
 
@@ -866,7 +868,7 @@ namespace GenerateTwo {
             // Exchange second node.
             Nodes w_neighbors = g.get_neighbours(w);
             for (Node w_n: w_neighbors) {
-                if (g.has_edge(v, w_n)) {
+                if (g.has_edge(v, w_n) or (v == w_n)) {
                     unordered_map<TwoTuple, Node>::const_iterator t = two_tuple_to_node.find(make_tuple(v, w_n));
                     two_tuple_graph.add_edge(i, t->second);
                     edge_type.insert({{make_tuple(i, t->second), 2}});
