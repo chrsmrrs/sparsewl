@@ -52,7 +52,7 @@ def main():
     for a in algorithms:
         for d, use_labels in dataset:
             gram_matrices = []
-            for i in range(0,6):
+            for i in range(0,10):
                 if not pth.exists(path + d + "__" + a + "_" + str(i) + ".gram"):
                     continue
                 else:
