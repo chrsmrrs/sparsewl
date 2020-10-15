@@ -56,9 +56,9 @@ class ZINC(InMemoryDataset):
 
         indices_test = list(range(0, 5000))
 
-        dp.get_dataset("ZINC_train", regression=True)
-        dp.get_dataset("ZINC_test", regression=True)
-        dp.get_dataset("ZINC_val", regression=True)
+        dp.get_dataset("ZINC_train")
+        dp.get_dataset("ZINC_test")
+        dp.get_dataset("ZINC_val")
         node_labels = pre.get_all_node_labels_ZINC_connected(True, True, indices_train, indices_val, indices_test)
 
         targets = pre.read_targets("ZINC_train", indices_train)
