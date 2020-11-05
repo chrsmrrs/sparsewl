@@ -57,9 +57,9 @@ class ZINCbase(InMemoryDataset):
             indices_train = [int(i) for i in indices_train]
 
 
-        dp.get_dataset("ZINC_train", regression=True)
-        dp.get_dataset("ZINC_test", regression=True)
-        dp.get_dataset("ZINC_val", regression=True)
+        dp.get_dataset("ZINC_train")
+        dp.get_dataset("ZINC_test")
+        dp.get_dataset("ZINC_val")
         node_labels = pre.get_all_node_labels_ZINC_1(True, True, indices_train, indices_val, indices_test)
         edge_labels = pre.get_all_edge_labels_ZINC_1(True, True, indices_train, indices_val, indices_test)
 
