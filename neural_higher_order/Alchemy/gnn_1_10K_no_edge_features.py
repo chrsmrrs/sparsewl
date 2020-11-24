@@ -112,7 +112,7 @@ class GINConv(MessagePassing):
 
         self.eps = torch.nn.Parameter(torch.Tensor([0]))
 
-    def forward(self, x, edge_index, edge_attr):
+    def forward(self, x, edge_index):
         out = self.mlp((1 + self.eps) * x + self.propagate(edge_index, x=x))
 
         return out
