@@ -62,7 +62,7 @@ class Alchemy(InMemoryDataset):
         targets.extend(tmp_2)
         targets.extend(tmp_3)
 
-        node_labels = pre.get_all_node_labels_allchem_connected(True, True, indices_train, indices_val, indices_test)
+        node_labels = pre.get_all_node_labels_allchem(True, True, indices_train, indices_val, indices_test)
 
         matrices = pre.get_all_matrices_connected("alchemy_full", indices_train)
         matrices.extend(pre.get_all_matrices_connected("alchemy_full", indices_val))
@@ -76,7 +76,7 @@ class Alchemy(InMemoryDataset):
             data.edge_index_1 = edge_index_1
             data.edge_index_2 = edge_index_2
 
-            one_hot = np.eye(49)[node_labels[i]]
+            one_hot = np.eye(83)[node_labels[i]]
             data.x = torch.from_numpy(one_hot).to(torch.float)
             data.y = data.y = torch.from_numpy(np.array([targets[i]])).to(torch.float)
 
@@ -105,7 +105,7 @@ class NetGIN(torch.nn.Module):
     def __init__(self, dim):
         super(NetGIN, self).__init__()
 
-        num_features = 49
+        num_features = 83
 
         nn1_1 = Sequential(Linear(num_features, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                            torch.nn.BatchNorm1d(dim), ReLU())
