@@ -2212,7 +2212,7 @@ pair<vector <vector<unsigned long>>, vector <vector<unsigned long>>> get_all_nod
             }
         }
 
-        node_labels_con.push_back(new_color);
+        node_labels_con.push_back(new_color_1);
 
         for (auto &c: colors_2) {
             const auto it(m_label_to_index.find(c));
@@ -2225,10 +2225,12 @@ pair<vector <vector<unsigned long>>, vector <vector<unsigned long>>> get_all_nod
                 new_color_2.push_back(it->second);
             }
         }
+
+        node_labels_unc.push_back(new_color_1);
     }
 
     cout << m_num_labels << endl;
-    return std::make_pair(new_color_1, new_color_2);
+    return std::make_pair(node_labels_con, node_labels_unc);
 }
 
 
