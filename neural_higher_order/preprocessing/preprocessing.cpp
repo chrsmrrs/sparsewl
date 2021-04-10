@@ -959,34 +959,110 @@ vector<unsigned long> get_node_labels_connected(const Graph &g, const bool use_l
             if (g.has_edge(i,j) or g.has_edge(i,j) or (i == j)) {
 
 
-            Label c_i = 1;
-            Label c_j = 2;
-            if (use_labels) {
-                c_i = AuxiliaryMethods::pairing(labels[i] + 1, c_i);
-                c_j = AuxiliaryMethods::pairing(labels[j] + 1, c_j);
-            }
-
-            Label c;
-            if (g.has_edge(i, j)) {
-                if (use_edge_labels) {
-                    auto s = edge_labels.find(make_tuple(i, j));
-                    c = AuxiliaryMethods::pairing(3, s->second);
-                } else {
-                    c = 3;
+                Label c_i = 1;
+                Label c_j = 2;
+                if (use_labels) {
+                    c_i = AuxiliaryMethods::pairing(labels[i] + 1, c_i);
+                    c_j = AuxiliaryMethods::pairing(labels[j] + 1, c_j);
                 }
-            } else if (i == j) {
-                c = 1;
-            } else {
-                c = 2;
-            }
 
-            Label new_color = AuxiliaryMethods::pairing(AuxiliaryMethods::pairing(c_i, c_j), c);
-            tuple_labels.push_back(new_color);
-        }}
+                Label c;
+                if (g.has_edge(i, j)) {
+                    if (use_edge_labels) {
+                        auto s = edge_labels.find(make_tuple(i, j));
+                        c = AuxiliaryMethods::pairing(3, s->second);
+                    } else {
+                        c = 3;
+                    }
+                } else if (i == j) {
+                    c = 1;
+                } else {
+                    c = 2;
+                }
+
+                Label new_color = AuxiliaryMethods::pairing(AuxiliaryMethods::pairing(c_i, c_j), c);
+                tuple_labels.push_back(new_color);
+            }}
     }
 
     return tuple_labels;
 }
+
+
+pair<vector<unsigned long>,vector<unsigned long>> get_node_labels_both(const Graph &g, const bool use_labels, const bool use_edge_labels) {
+    size_t num_nodes = g.get_num_nodes();
+
+    // Create a node for each two set.
+    Labels labels;
+    vector<unsigned long> tuple_labels_con;
+    vector<unsigned long> tuple_labels_unc;
+    if (use_labels) {
+        labels = g.get_labels();
+    }
+
+    EdgeLabels edge_labels;
+    if (use_edge_labels) {
+        edge_labels = g.get_edge_labels();
+    }
+
+    for (Node i = 0; i < num_nodes; ++i) {
+        for (Node j = 0; j < num_nodes; ++j) {
+            if (g.has_edge(i,j) or g.has_edge(i,j) or (i == j)) {
+                Label c_i = 1;
+                Label c_j = 2;
+                if (use_labels) {
+                    c_i = AuxiliaryMethods::pairing(labels[i] + 1, c_i);
+                    c_j = AuxiliaryMethods::pairing(labels[j] + 1, c_j);
+                }
+
+                Label c;
+                if (g.has_edge(i, j)) {
+                    if (use_edge_labels) {
+                        auto s = edge_labels.find(make_tuple(i, j));
+                        c = AuxiliaryMethods::pairing(3, s->second);
+                    } else {
+                        c = 3;
+                    }
+                } else if (i == j) {
+                    c = 1;
+                } else {
+                    c = 2;
+                }
+
+                Label new_color = AuxiliaryMethods::pairing(AuxiliaryMethods::pairing(c_i, c_j), c);
+                tuple_labels_con.push_back(new_color);
+            } else {
+
+                Label c_i = 1;
+                Label c_j = 2;
+                if (use_labels) {
+                    c_i = AuxiliaryMethods::pairing(labels[i] + 1, c_i);
+                    c_j = AuxiliaryMethods::pairing(labels[j] + 1, c_j);
+                }
+
+                Label c;
+                if (g.has_edge(i, j)) {
+                    if (use_edge_labels) {
+                        auto s = edge_labels.find(make_tuple(i, j));
+                        c = AuxiliaryMethods::pairing(3, s->second);
+                    } else {
+                        c = 3;
+                    }
+                } else if (i == j) {
+                    c = 1;
+                } else {
+                    c = 2;
+                }
+
+                Label new_color = AuxiliaryMethods::pairing(AuxiliaryMethods::pairing(c_i, c_j), c);
+                tuple_labels_unc.push_back(new_color);
+            }
+        }
+    }
+
+    return std::make_pair(tuple_labels_con, tuple_labels_unc);
+}
+
 
 
 vector<unsigned long> get_node_labels_1(const Graph &g, const bool use_labels) {
