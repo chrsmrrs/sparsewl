@@ -2157,7 +2157,7 @@ vector <vector<unsigned long>> get_all_node_labels_allchem(const bool use_node_l
 
 }
 
-pair<vector <vector<unsigned long>>, vector <vector<unsigned long>> get_all_node_labels_allchem_both(const bool use_node_labels, const bool use_edge_labels,
+pair<vector <vector<unsigned long>>, vector <vector<unsigned long>>> get_all_node_labels_allchem_both(const bool use_node_labels, const bool use_edge_labels,
                                                            const std::vector<int> &indices_train,
                                                            const std::vector<int> &indices_val,
                                                            const std::vector<int> &indices_test) {
@@ -2825,7 +2825,9 @@ PYBIND11_MODULE(preprocessing, m) {
     m.def("get_all_node_labels_alchem_1", &get_all_node_labels_alchem_1);
     m.def("get_all_node_labels_allchem", &get_all_node_labels_allchem);
     m.def("get_all_node_labels_allchem_connected", &get_all_node_labels_allchem_connected);
+
     m.def("get_all_node_labels_allchem_both", &get_all_node_labels_allchem_both);
+
     m.def("get_all_node_labels_ZINC_3", &get_all_node_labels_ZINC_3);
     m.def("get_all_node_labels_allchem_3", &get_all_node_labels_allchem_3);
     m.def("get_all_edge_labels_ZINC_1", &get_all_edge_labels_ZINC_1);
