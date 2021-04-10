@@ -200,7 +200,7 @@ generate_local_sparse_am_connected(const Graph &g, const bool use_labels, const 
     Node num_two_tuples = 0;
     for (Node i = 0; i < num_nodes; ++i) {
         for (Node j = 0; j < num_nodes; ++j) {
-            if (g.has_edge(i,j) or (i == j)) {
+            if (g.has_edge(j,i ) or g.has_edge(i,j) or (i == j)) {
                 two_tuple_graph.add_node();
 
                 // Map each pair to node in two set graph and also inverse.
@@ -247,29 +247,30 @@ generate_local_sparse_am_connected(const Graph &g, const bool use_labels, const 
         // Exchange first node.
         Nodes v_neighbors = g.get_neighbours(v);
         for (Node v_n: v_neighbors) {
-            if (g.has_edge(v_n,w) or (v_n == w)) {
-            unordered_map<TwoTuple, Node>::const_iterator t = two_tuple_to_node.find(make_tuple(v_n, w));
-            two_tuple_graph.add_edge(i, t->second);
-            edge_type.insert({{make_tuple(i, t->second), 1}});
-            vertex_id.insert({{make_tuple(i, t->second), v_n}});
-            local.insert({{make_tuple(i, t->second), 1}});
 
-            nonzero_compenents_1.push_back({{i, t->second}});
-        }}
+            unordered_map<TwoTuple, Node>::const_iterator t = two_tuple_to_node.find(make_tuple(v_n, w));
+            if (t != two_tuple_to_node.end()) {
+                two_tuple_graph.add_edge(i, t->second);
+                edge_type.insert({{make_tuple(i, t->second), 1}});
+                vertex_id.insert({{make_tuple(i, t->second), v_n}});
+                local.insert({{make_tuple(i, t->second), 1}});
+                nonzero_compenents_1.push_back({{i, t->second}});
+            }
+        }
 
         // Exchange second node.
         Nodes w_neighbors = g.get_neighbours(w);
         for (Node w_n: w_neighbors) {
-            if (g.has_edge(v,w_n) or (v == w_n)) {
-                unordered_map<TwoTuple, Node>::const_iterator t = two_tuple_to_node.find(make_tuple(v, w_n));
+
+            unordered_map<TwoTuple, Node>::const_iterator t = two_tuple_to_node.find(make_tuple(v, w_n));
+            if (t != two_tuple_to_node.end()) {
                 two_tuple_graph.add_edge(i, t->second);
                 edge_type.insert({{make_tuple(i, t->second), 2}});
                 vertex_id.insert({{make_tuple(i, t->second), w_n}});
                 local.insert({{make_tuple(i, t->second), 1}});
-
-
                 nonzero_compenents_2.push_back({{i, t->second}});
-            }}
+            }
+        }
     }
 
     return std::make_pair(nonzero_compenents_1, nonzero_compenents_2);
@@ -953,7 +954,7 @@ vector<unsigned long> get_node_labels_connected(const Graph &g, const bool use_l
 
     for (Node i = 0; i < num_nodes; ++i) {
         for (Node j = 0; j < num_nodes; ++j) {
-            if (g.has_edge(i,j) or (i == j)) {
+            if (g.has_edge(i,j) or g.has_edge(i,j) or (i == j)) {
 
 
             Label c_i = 1;
@@ -1830,6 +1831,63 @@ vector <vector<unsigned long>> get_all_node_labels_allchem(const bool use_node_l
 
 }
 
+vector <vector<unsigned long>> get_all_node_labels_allchem_connected(const bool use_node_labels, const bool use_edge_labels,
+                                                           const std::vector<int> &indices_train,
+                                                           const std::vector<int> &indices_val,
+                                                           const std::vector<int> &indices_test) {
+    GraphDatabase gdb_1 = AuxiliaryMethods::read_graph_txt_file("alchemy_full");
+    gdb_1.erase(gdb_1.begin() + 0);
+
+    GraphDatabase gdb_new_1;
+    for (auto i : indices_train) {
+        gdb_new_1.push_back(gdb_1[int(i)]);
+    }
+    cout << gdb_new_1.size() << endl;
+    cout << "$$$" << endl;
+
+
+    for (auto i : indices_val) {
+        gdb_new_1.push_back(gdb_1[int(i)]);
+    }
+    cout << gdb_new_1.size() << endl;
+    cout << "$$$" << endl;
+
+
+    for (auto i : indices_test) {
+        gdb_new_1.push_back(gdb_1[int(i)]);
+    }
+    cout << gdb_new_1.size() << endl;
+    cout << "$$$" << endl;
+
+
+    vector <vector<unsigned long>> node_labels;
+
+    uint m_num_labels = 0;
+    unordered_map<int, int> m_label_to_index;
+
+    for (auto &g: gdb_new_1) {
+        vector<unsigned long> colors = get_node_labels_connected(g, use_node_labels, use_edge_labels);
+        vector<unsigned long> new_color;
+
+        for (auto &c: colors) {
+            const auto it(m_label_to_index.find(c));
+            if (it == m_label_to_index.end()) {
+                m_label_to_index.insert({{c, m_num_labels}});
+                new_color.push_back(m_num_labels);
+
+                m_num_labels++;
+            } else {
+                new_color.push_back(it->second);
+            }
+        }
+
+        node_labels.push_back(new_color);
+    }
+
+    cout << m_num_labels << endl;
+    return node_labels;
+}
+
 
 vector <vector<unsigned long>> get_all_node_labels_ZINC_3(const bool use_node_labels, const bool use_edge_labels,
                                                           const std::vector<int> &indices_train,
@@ -2422,6 +2480,7 @@ PYBIND11_MODULE(preprocessing, m) {
     m.def("get_all_node_labels_ZINC_1", &get_all_node_labels_ZINC_1);
     m.def("get_all_node_labels_alchem_1", &get_all_node_labels_alchem_1);
     m.def("get_all_node_labels_allchem", &get_all_node_labels_allchem);
+    m.def("get_all_node_labels_allchem_connected", &get_all_node_labels_allchem_connected);
     m.def("get_all_node_labels_ZINC_3", &get_all_node_labels_ZINC_3);
     m.def("get_all_node_labels_allchem_3", &get_all_node_labels_allchem_3);
     m.def("get_all_edge_labels_ZINC_1", &get_all_edge_labels_ZINC_1);
