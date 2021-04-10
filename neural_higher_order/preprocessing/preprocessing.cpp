@@ -234,8 +234,8 @@ generate_local_sparse_am_connected(const Graph &g, const bool use_labels, const 
                 tuple_labels.push_back(new_color);
             }
         }
-       }
     }
+
 
     vector <vector<uint >> nonzero_compenents_1;
     vector <vector<uint >> nonzero_compenents_2;
