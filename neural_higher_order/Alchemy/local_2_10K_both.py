@@ -93,8 +93,8 @@ class Alchemy(InMemoryDataset):
             one_hot = np.eye(83)[node_labels_unc[i]]
             data.x_unc = torch.from_numpy(one_hot).to(torch.float)
 
-            data.batch_con = torch.from_numpy(np.ones(int(edge_index_0_con[0].max().item()) + 1, dtype=np.int64)).to(torch.long)
-            data.batch_unc = torch.from_numpy(np.ones(int(edge_index_0_unc[0].max().item()) + 1, dtype=np.int64)).to(torch.long)
+            data.batch_con = torch.from_numpy(np.zeros(int(edge_index_0_con[0].max().item()) + 1, dtype=np.int64)).to(torch.long)
+            data.batch_unc = torch.from_numpy(np.zeros(int(edge_index_0_unc[0].max().item()) + 1, dtype=np.int64)).to(torch.long)
 
             data.num_con_0 = torch.tensor(int(edge_index_0_con[0].max().item()) + 1).to(torch.long)
             data.num_con_1 = torch.tensor(int(edge_index_1_con[1].max().item()) + 1).to(torch.long)
