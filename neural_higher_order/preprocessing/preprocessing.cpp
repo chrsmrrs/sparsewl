@@ -1232,31 +1232,32 @@ vector<unsigned long> get_node_labels_unc(const Graph &g, const bool use_labels,
 
     for (Node i = 0; i < num_nodes; ++i) {
         for (Node j = 0; j < num_nodes; ++j) {
-            if (not g.has_edge(i,j))
+            if (not g.has_edge(i, j)) {
 
-            Label c_i = 1;
-            Label c_j = 2;
-            if (use_labels) {
-                c_i = AuxiliaryMethods::pairing(labels[i] + 1, c_i);
-                c_j = AuxiliaryMethods::pairing(labels[j] + 1, c_j);
-            }
-
-            Label c;
-            if (g.has_edge(i, j)) {
-                if (use_edge_labels) {
-                    auto s = edge_labels.find(make_tuple(i, j));
-                    c = AuxiliaryMethods::pairing(3, s->second);
-                } else {
-                    c = 3;
+                Label c_i = 1;
+                Label c_j = 2;
+                if (use_labels) {
+                    c_i = AuxiliaryMethods::pairing(labels[i] + 1, c_i);
+                    c_j = AuxiliaryMethods::pairing(labels[j] + 1, c_j);
                 }
-            } else if (i == j) {
-                c = 1;
-            } else {
-                c = 2;
-            }
 
-            Label new_color = AuxiliaryMethods::pairing(AuxiliaryMethods::pairing(c_i, c_j), c);
-            tuple_labels.push_back(new_color);
+                Label c;
+                if (g.has_edge(i, j)) {
+                    if (use_edge_labels) {
+                        auto s = edge_labels.find(make_tuple(i, j));
+                        c = AuxiliaryMethods::pairing(3, s->second);
+                    } else {
+                        c = 3;
+                    }
+                } else if (i == j) {
+                    c = 1;
+                } else {
+                    c = 2;
+                }
+
+                Label new_color = AuxiliaryMethods::pairing(AuxiliaryMethods::pairing(c_i, c_j), c);
+                tuple_labels.push_back(new_color);
+            }
         }
     }
 
