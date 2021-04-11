@@ -476,13 +476,13 @@ generate_local_sparse_am_unc(const Graph &g, const bool use_labels, const bool u
         for (Node v_n: v_neighbors) {
 
             unordered_map<TwoTuple, Node>::const_iterator t = two_tuple_to_node.find(make_tuple(v_n, w));
-            if (g.has_edge(v_n, w) or g.has_edge(w, v_n) or (w == v_n)) {
+            //if (g.has_edge(v_n, w) or g.has_edge(w, v_n) or (w == v_n)) {
                 two_tuple_graph.add_edge(i, t->second);
                 edge_type.insert({{make_tuple(i, t->second), 1}});
                 vertex_id.insert({{make_tuple(i, t->second), v_n}});
                 local.insert({{make_tuple(i, t->second), 1}});
                 nonzero_compenents_1.push_back({{i, t->second}});
-            }
+            //}
         }
 
         // Exchange second node.
@@ -490,13 +490,13 @@ generate_local_sparse_am_unc(const Graph &g, const bool use_labels, const bool u
         for (Node w_n: w_neighbors) {
 
             unordered_map<TwoTuple, Node>::const_iterator t = two_tuple_to_node.find(make_tuple(v, w_n));
-            if (g.has_edge(w_n, v) or g.has_edge(v, w_n) or (v == w_n)) {
+            //if (g.has_edge(w_n, v) or g.has_edge(v, w_n) or (v == w_n)) {
                 two_tuple_graph.add_edge(i, t->second);
                 edge_type.insert({{make_tuple(i, t->second), 2}});
                 vertex_id.insert({{make_tuple(i, t->second), w_n}});
                 local.insert({{make_tuple(i, t->second), 1}});
                 nonzero_compenents_2.push_back({{i, t->second}});
-            }
+            //}
         }
     }
 
