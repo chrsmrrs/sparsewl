@@ -96,10 +96,10 @@ class Alchemy(InMemoryDataset):
             data.batch_con = torch.from_numpy(np.ones(edge_index_0_con.max() + 1))
             data.batch_unc = torch.from_numpy(np.ones(edge_index_0_unc.max() + 1))
 
-            #data.num_con_0 = edge_index_0_con.max() + 1
-            #data.num_con_1 = edge_index_1_con.max() + 1
-            #data.num_unc_0 = edge_index_0_unc.max() + 1
-            #data.num_unc_1 = edge_index_1_unc.max() + 1
+            data.num_con_0 = matrices_con[i][0].max() + 1
+            data.num_con_1 = matrices_con[i][1].max() + 1
+            data.num_unc_0 = matrices_unc[i][0].max() + 1
+            data.num_unc_1 = matrices_unc[i][1].max() + 1
 
             data.y = torch.from_numpy(np.array([targets[i]])).to(torch.float)
 
