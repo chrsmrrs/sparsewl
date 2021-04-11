@@ -62,54 +62,51 @@ class Alchemy(InMemoryDataset):
         targets.extend(tmp_2)
         targets.extend(tmp_3)
 
-        #node_labels_con = pre.get_all_node_labels_allchem_con(True, True, indices_train, indices_val, indices_test)
-        #node_labels_unc = pre.get_all_node_labels_allchem_unc(True, True, indices_train, indices_val, indices_test)
+        node_labels_con = pre.get_all_node_labels_allchem_con(True, True, indices_train, indices_val, indices_test)
+        node_labels_unc = pre.get_all_node_labels_allchem_unc(True, True, indices_train, indices_val, indices_test)
 
         matrices_con = pre.get_all_matrices_con("alchemy_full", indices_train)
-        #matrices_con.extend(pre.get_all_matrices_con("alchemy_full", indices_val))
-        #matrices_con.extend(pre.get_all_matrices_con("alchemy_full", indices_test))
+        matrices_con.extend(pre.get_all_matrices_con("alchemy_full", indices_val))
+        matrices_con.extend(pre.get_all_matrices_con("alchemy_full", indices_test))
 
         matrices_unc = pre.get_all_matrices_unc("alchemy_full", indices_train)
-        #matrices_unc.extend(pre.get_all_matrices_unc("alchemy_full", indices_val))
-        #matrices_unc.extend(pre.get_all_matrices_unc("alchemy_full", indices_test))
+        matrices_unc.extend(pre.get_all_matrices_unc("alchemy_full", indices_val))
+        matrices_unc.extend(pre.get_all_matrices_unc("alchemy_full", indices_test))
 
         for i, m in enumerate(matrices_con):
-            edge_index_1_con = torch.tensor(matrices_con[i][0]).t().contiguous()
-            edge_index_2_con = torch.tensor(matrices_con[i][1]).t().contiguous()
+            edge_index_0_con = torch.tensor(matrices_con[i][0]).t().contiguous()
+            edge_index_1_con = torch.tensor(matrices_con[i][1]).t().contiguous()
 
-            edge_index_1_unc = torch.tensor(matrices_unc[i][0]).t().contiguous()
-            edge_index_2_unc = torch.tensor(matrices_unc[i][1]).t().contiguous()
+            edge_index_0_unc = torch.tensor(matrices_unc[i][0]).t().contiguous()
+            edge_index_1_unc = torch.tensor(matrices_unc[i][1]).t().contiguous()
 
             data = Data()
+            data.edge_index_0_con = edge_index_0_con
             data.edge_index_1_con = edge_index_1_con
-            data.edge_index_2_con = edge_index_2_con
 
+            data.edge_index_0_unc = edge_index_0_unc
             data.edge_index_1_unc = edge_index_1_unc
-            data.edge_index_2_unc = edge_index_2_unc
 
-            # one_hot = np.eye(83)[node_labels_con[i]]
-            # data.x_con = torch.from_numpy(one_hot).to(torch.float)
-            #
-            # one_hot = np.eye(83)[node_labels_unc[i]]
-            # data.x_unc = torch.from_numpy(one_hot).to(torch.float)
+            one_hot = np.eye(83)[node_labels_con[i]]
+            data.x_con = torch.from_numpy(one_hot).to(torch.float)
+
+            one_hot = np.eye(83)[node_labels_unc[i]]
+            data.x_unc = torch.from_numpy(one_hot).to(torch.float)
+
+            data.num_con_0 = edge_index_0_con.size()
+            data.num_con_1 = edge_index_1_con.size()
+            data.num_unc_0 = edge_index_0_unc.size()
+            data.num_unc_1 = edge_index_1_unc.size()
 
             data.y = torch.from_numpy(np.array([targets[i]])).to(torch.float)
 
-            print(edge_index_1_con.size())
-            print(edge_index_1_con[0].max())
-            print(edge_index_1_con[1].max())
+            if edge_index_1_con[0].max() != edge_index_1_con[1].max():
+                print("xxx")
+                exit()
 
-
-            print(edge_index_1_unc.size())
-            print(edge_index_1_unc[0].max())
-            print(edge_index_1_unc[1].max())
-            exit()
-
-            # data.num_nodes_con_0_0 = matrices_con[i][0]
-            # data.num_nodes_con_0_1 = matrices_con[i][1]
-            #
-            # data.num_nodes_con_1_0 =
-            # data.num_nodes_con_1_1 =
+            if edge_index_1_unc[0].max() != edge_index_1_unc[1].max():
+                print("xxx")
+                exit()
 
 
             data_list.append(data)
