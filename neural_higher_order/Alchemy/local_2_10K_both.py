@@ -127,6 +127,10 @@ class MyData(Data):
             return self.num_unc_0
         if key in ['edge_index_1_und']:
             return self.num_unc_1
+        if key in ['batch_con']:
+            return self.num_con_1
+        if key in ['batch_unc']:
+            return self.num_unc_1
         else:
             return 0
 
