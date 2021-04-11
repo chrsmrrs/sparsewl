@@ -393,10 +393,7 @@ generate_local_sparse_am_con(const Graph &g, const bool use_labels, const bool u
 
 
 
-
-
-tuple <vector<vector < uint>>, vector <vector<uint>>>
-
+pair <vector<vector < uint>>, vector <vector<uint>>>
 generate_local_sparse_am_unc(const Graph &g, const bool use_labels, const bool use_edge_labels) {
     size_t num_nodes = g.get_num_nodes();
     // New graph to be generated.
@@ -428,7 +425,7 @@ generate_local_sparse_am_unc(const Graph &g, const bool use_labels, const bool u
     for (Node i = 0; i < num_nodes; ++i) {
         for (Node j = 0; j < num_nodes; ++j) {
 
-            if (not g.has_edge(j, i)) {
+            if (g.has_edge(j,i ) or g.has_edge(i,j) or (i == j)) {
                 two_tuple_graph.add_node();
 
                 // Map each pair to node in two set graph and also inverse.
@@ -502,8 +499,12 @@ generate_local_sparse_am_unc(const Graph &g, const bool use_labels, const bool u
         }
     }
 
+
     return std::make_pair(nonzero_compenents_1, nonzero_compenents_2);
 }
+
+
+
 
 
 vector <vector<uint>> generate_local_sparse_am_1(const Graph &g) {
@@ -1555,7 +1556,7 @@ for (
 auto &g
 : gdb_new) {
 matrices.
-push_back(generate_local_sparse_am_con(g, false, false)
+push_back(generate_local_sparse_am_unc(g, false, false)
 );
 }
 
