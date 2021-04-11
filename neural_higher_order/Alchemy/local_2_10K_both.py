@@ -69,7 +69,7 @@ class Alchemy(InMemoryDataset):
         #matrices_con.extend(pre.get_all_matrices_con("alchemy_full", indices_val))
         #matrices_con.extend(pre.get_all_matrices_con("alchemy_full", indices_test))
 
-        #matrices_unc = pre.get_all_matrices_unc("alchemy_full", indices_train)
+        matrices_unc = pre.get_all_matrices_unc("alchemy_full", indices_train)
         #matrices_unc.extend(pre.get_all_matrices_unc("alchemy_full", indices_val))
         #matrices_unc.extend(pre.get_all_matrices_unc("alchemy_full", indices_test))
 
@@ -77,15 +77,15 @@ class Alchemy(InMemoryDataset):
             edge_index_1_con = torch.tensor(matrices_con[i][0]).t().contiguous()
             edge_index_2_con = torch.tensor(matrices_con[i][1]).t().contiguous()
 
-            #edge_index_1_unc = torch.tensor(matrices_unc[i][0]).t().contiguous()
-            #edge_index_2_unc = torch.tensor(matrices_unc[i][1]).t().contiguous()
+            edge_index_1_unc = torch.tensor(matrices_unc[i][0]).t().contiguous()
+            edge_index_2_unc = torch.tensor(matrices_unc[i][1]).t().contiguous()
 
             data = Data()
             data.edge_index_1_con = edge_index_1_con
             data.edge_index_2_con = edge_index_2_con
 
-            #data.edge_index_1_unc = edge_index_1_unc
-            #data.edge_index_2_unc = edge_index_2_unc
+            data.edge_index_1_unc = edge_index_1_unc
+            data.edge_index_2_unc = edge_index_2_unc
 
             # one_hot = np.eye(83)[node_labels_con[i]]
             # data.x_con = torch.from_numpy(one_hot).to(torch.float)
@@ -96,7 +96,7 @@ class Alchemy(InMemoryDataset):
             data.y = data.y = torch.from_numpy(np.array([targets[i]])).to(torch.float)
 
             print(edge_index_1_con.size())
-            #print(edge_index_1_unc.size())
+            print(edge_index_1_unc.size())
             exit()
 
             # data.num_nodes_con_0_0 = matrices_con[i][0]
