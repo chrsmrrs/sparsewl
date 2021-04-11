@@ -128,9 +128,9 @@ class MyData(Data):
         if key in ['edge_index_1_und']:
             return self.num_unc_1
         if key in ['batch_con']:
-            return self.num_con_1
+            return self.num_con_0
         if key in ['batch_unc']:
-            return self.num_unc_1
+            return self.num_unc_0
         else:
             return 0
 
@@ -207,30 +207,30 @@ class NetGIN(torch.nn.Module):
         self.fc4 = Linear(dim, 12)
 
     def forward(self, data):
-        x = data.x
+        x = data.x_unc
 
-        x_1 = F.relu(self.conv1_1(x, data.edge_index_1))
-        x_2 = F.relu(self.conv1_2(x, data.edge_index_2))
+        x_1 = F.relu(self.conv1_1(x, data.edge_index_1_unc))
+        x_2 = F.relu(self.conv1_2(x, data.edge_index_2_unc))
         x_1_r = self.mlp_1(torch.cat([x_1, x_2], dim=-1))
 
-        x_1 = F.relu(self.conv2_1(x_1_r, data.edge_index_1))
-        x_2 = F.relu(self.conv2_2(x_1_r, data.edge_index_2))
+        x_1 = F.relu(self.conv2_1(x_1_r, data.edge_index_1_unc))
+        x_2 = F.relu(self.conv2_2(x_1_r, data.edge_index_2_unc))
         x_2_r = self.mlp_2(torch.cat([x_1, x_2], dim=-1))
 
-        x_1 = F.relu(self.conv3_1(x_2_r, data.edge_index_1))
-        x_2 = F.relu(self.conv3_2(x_2_r, data.edge_index_2))
+        x_1 = F.relu(self.conv3_1(x_2_r, data.edge_index_1_unc))
+        x_2 = F.relu(self.conv3_2(x_2_r, data.edge_index_2_unc))
         x_3_r = self.mlp_3(torch.cat([x_1, x_2], dim=-1))
 
-        x_1 = F.relu(self.conv4_1(x_3_r, data.edge_index_1))
-        x_2 = F.relu(self.conv4_2(x_3_r, data.edge_index_2))
+        x_1 = F.relu(self.conv4_1(x_3_r, data.edge_index_1_unc))
+        x_2 = F.relu(self.conv4_2(x_3_r, data.edge_index_2_unc))
         x_4_r = self.mlp_4(torch.cat([x_1, x_2], dim=-1))
 
-        x_1 = F.relu(self.conv5_1(x_4_r, data.edge_index_1))
-        x_2 = F.relu(self.conv5_2(x_4_r, data.edge_index_2))
+        x_1 = F.relu(self.conv5_1(x_4_r, data.edge_index_1_unc))
+        x_2 = F.relu(self.conv5_2(x_4_r, data.edge_index_2_unc))
         x_5_r = self.mlp_5(torch.cat([x_1, x_2], dim=-1))
 
-        x_1 = F.relu(self.conv6_1(x_5_r, data.edge_index_1))
-        x_2 = F.relu(self.conv6_2(x_5_r, data.edge_index_2))
+        x_1 = F.relu(self.conv6_1(x_5_r, data.edge_index_1_unc))
+        x_2 = F.relu(self.conv6_2(x_5_r, data.edge_index_2_unc))
         x_6_r = self.mlp_6(torch.cat([x_1, x_2], dim=-1))
 
         x = x_6_r
