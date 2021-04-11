@@ -279,7 +279,7 @@ for _ in range(5):
             data = data.to(device)
 
 
-            print(data.batch_con)
+            print(data.batch_con.max())
             exit()
 
             optimizer.zero_grad()
