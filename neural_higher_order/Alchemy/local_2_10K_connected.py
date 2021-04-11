@@ -243,7 +243,7 @@ for _ in range(5):
             loss = lf(model(data), data.y)
 
             loss.backward()
-            loss_all +=  lf(model(data), data.y, reduction="sum")
+            loss_all += lf(model(data), data.y, reduction="sum")
             optimizer.step()
         return (loss_all / len(train_loader.dataset))
 
