@@ -256,7 +256,6 @@ train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
-exit()
 
 results = []
 results_log = []
@@ -272,9 +271,17 @@ for _ in range(5):
         model.train()
         loss_all = 0
 
+
+
+
         lf = torch.nn.L1Loss()
         for data in train_loader:
             data = data.to(device)
+
+
+            print(data.batch_con)
+            exit()
+
             optimizer.zero_grad()
             loss = lf(model(data), data.y)
 
