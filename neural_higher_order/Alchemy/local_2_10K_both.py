@@ -260,8 +260,10 @@ class NetGIN(torch.nn.Module):
         self.mlp_6_con = Sequential(Linear(2 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                                 torch.nn.BatchNorm1d(dim), ReLU())
         self.set2set_con = Set2Set(1 * dim, processing_steps=6)
-        
-        
+
+        self.mlp_fuse = Sequential(Linear(2 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
+                                torch.nn.BatchNorm1d(dim), ReLU())
+
         self.fc1 = Linear(2 * dim, dim)
         self.fc4 = Linear(dim, 12)
 
@@ -327,7 +329,9 @@ class NetGIN(torch.nn.Module):
 
         x_con = self.set2set_con(x, data.batch_con.to(torch.long))
 
-        x = F.relu(self.fc1(x_unc))
+        x = self.mlp_fuse(torch.cat([x_con, x_unc], dim=-1))
+
+        x = F.relu(self.fc1(x))
         x = self.fc4(x)
         return x
 
