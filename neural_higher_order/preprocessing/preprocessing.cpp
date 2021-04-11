@@ -460,6 +460,7 @@ generate_local_sparse_am_unc(const Graph &g, const bool use_labels, const bool u
         }
     }
 
+    cout << "ddd" << endl;
 
     vector <vector<uint >> nonzero_compenents_1;
     vector <vector<uint >> nonzero_compenents_2;
