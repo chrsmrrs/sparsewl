@@ -63,7 +63,7 @@ class Alchemy(InMemoryDataset):
         targets.extend(tmp_3)
 
         node_labels_con = pre.get_all_node_labels_allchem_con(True, True, indices_train, indices_val, indices_test)
-        node_labels_unc = pre.get_all_node_labels_allchem_unc(True, True, indices_train, indices_val, indices_test)
+        node_labels_unc = pre.get_all_node_labels_allchem(True, True, indices_train, indices_val, indices_test)
 
         matrices_con = pre.get_all_matrices_con("alchemy_full", indices_train)
         matrices_con.extend(pre.get_all_matrices_con("alchemy_full", indices_val))
@@ -96,10 +96,10 @@ class Alchemy(InMemoryDataset):
             data.batch_con = torch.from_numpy(int(np.ones(edge_index_0_con.max().item()) + 1))
             data.batch_unc = torch.from_numpy(int(np.ones(edge_index_0_unc.max().item()) + 1))
 
-            data.num_con_0 = int(edge_index_0_con.max().item()) + 1
-            data.num_con_1 = int(edge_index_1_con.max().item()) + 1
-            data.num_unc_0 = int(edge_index_0_unc.max().item()) + 1
-            data.num_unc_1 = int(edge_index_1_unc.max().item()) + 1
+            data.num_con_0 = int(edge_index_0_con[0].max().item()) + 1
+            data.num_con_1 = int(edge_index_1_con[1].max().item()) + 1
+            data.num_unc_0 = int(edge_index_0_unc[0].max().item()) + 1
+            data.num_unc_1 = int(edge_index_1_unc[1].max().item()) + 1
 
             data.y = torch.from_numpy(np.array([targets[i]])).to(torch.float)
 
