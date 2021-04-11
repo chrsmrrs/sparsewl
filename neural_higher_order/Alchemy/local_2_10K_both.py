@@ -93,10 +93,10 @@ class Alchemy(InMemoryDataset):
             one_hot = np.eye(83)[node_labels_unc[i]]
             data.x_unc = torch.from_numpy(one_hot).to(torch.float)
 
-            data.num_con_0 = edge_index_0_con.size()
-            data.num_con_1 = edge_index_1_con.size()
-            data.num_unc_0 = edge_index_0_unc.size()
-            data.num_unc_1 = edge_index_1_unc.size()
+            data.num_con_0 = edge_index_0_con.max()
+            data.num_con_1 = edge_index_1_con.max()
+            data.num_unc_0 = edge_index_0_unc.max()
+            data.num_unc_1 = edge_index_1_unc.max()
 
             data.y = torch.from_numpy(np.array([targets[i]])).to(torch.float)
 
@@ -117,9 +117,16 @@ class Alchemy(InMemoryDataset):
 
 class MyData(Data):
     def __inc__(self, key, value):
-        return self.num_nodes if key in [
-            'edge_index_1_con', 'edge_index_2_con'
-        ] else 0
+        if key in ['edge_index_0_con']:
+            return self.num_con_0
+        if key in ['edge_index_1_con']:
+            return self.num_con_1
+        if key in ['edge_index_0_unc']:
+            return self.num_unc_0
+        if key in ['edge_index_1_und']:
+            return self.num_unc_1
+        else:
+            return 0
 
 
 class MyTransform(object):
@@ -246,6 +253,8 @@ batch_size = 64
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+
+exit()
 
 results = []
 results_log = []
