@@ -392,7 +392,6 @@ generate_local_sparse_am_con(const Graph &g, const bool use_labels, const bool u
 }
 
 
-
 pair <vector<vector < uint>>, vector <vector<uint>>>
 generate_local_sparse_am_unc(const Graph &g, const bool use_labels, const bool use_edge_labels) {
     size_t num_nodes = g.get_num_nodes();
@@ -425,7 +424,7 @@ generate_local_sparse_am_unc(const Graph &g, const bool use_labels, const bool u
     for (Node i = 0; i < num_nodes; ++i) {
         for (Node j = 0; j < num_nodes; ++j) {
 
-            if (not g.has_edge(i,j)) {
+            //if (g.has_edge(j,i ) or g.has_edge(i,j) or (i == j)) {
                 two_tuple_graph.add_node();
 
                 // Map each pair to node in two set graph and also inverse.
@@ -458,9 +457,8 @@ generate_local_sparse_am_unc(const Graph &g, const bool use_labels, const bool u
                 tuple_labels.push_back(new_color);
             }
         }
-    }
+    //}
 
-    cout << "ddd" << endl;
 
     vector <vector<uint >> nonzero_compenents_1;
     vector <vector<uint >> nonzero_compenents_2;
@@ -476,13 +474,13 @@ generate_local_sparse_am_unc(const Graph &g, const bool use_labels, const bool u
         for (Node v_n: v_neighbors) {
 
             unordered_map<TwoTuple, Node>::const_iterator t = two_tuple_to_node.find(make_tuple(v_n, w));
-            //if (g.has_edge(v_n, w) or g.has_edge(w, v_n) or (w == v_n)) {
+            if (g.has_edge(v_n, w) or g.has_edge(w, v_n) or (w == v_n)) {
                 two_tuple_graph.add_edge(i, t->second);
                 edge_type.insert({{make_tuple(i, t->second), 1}});
                 vertex_id.insert({{make_tuple(i, t->second), v_n}});
                 local.insert({{make_tuple(i, t->second), 1}});
                 nonzero_compenents_1.push_back({{i, t->second}});
-            //}
+            }
         }
 
         // Exchange second node.
@@ -490,19 +488,22 @@ generate_local_sparse_am_unc(const Graph &g, const bool use_labels, const bool u
         for (Node w_n: w_neighbors) {
 
             unordered_map<TwoTuple, Node>::const_iterator t = two_tuple_to_node.find(make_tuple(v, w_n));
-            //if (g.has_edge(w_n, v) or g.has_edge(v, w_n) or (v == w_n)) {
+            if (g.has_edge(w_n, v) or g.has_edge(v, w_n) or (v == w_n)) {
                 two_tuple_graph.add_edge(i, t->second);
                 edge_type.insert({{make_tuple(i, t->second), 2}});
                 vertex_id.insert({{make_tuple(i, t->second), w_n}});
                 local.insert({{make_tuple(i, t->second), 1}});
                 nonzero_compenents_2.push_back({{i, t->second}});
-            //}
+            }
         }
     }
 
 
     return std::make_pair(nonzero_compenents_1, nonzero_compenents_2);
 }
+
+
+
 
 
 
