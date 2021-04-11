@@ -428,7 +428,7 @@ generate_local_sparse_am_unc(const Graph &g, const bool use_labels, const bool u
     for (Node i = 0; i < num_nodes; ++i) {
         for (Node j = 0; j < num_nodes; ++j) {
 
-            if (not g.has_edge(j, i) and not g.has_edge(i, j)) {
+            if (not g.has_edge(j, i)) {
                 two_tuple_graph.add_node();
 
                 // Map each pair to node in two set graph and also inverse.
