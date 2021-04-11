@@ -258,7 +258,7 @@ train_dataset = dataset[0:10000].shuffle()
 val_dataset = dataset[10000:11000].shuffle()
 test_dataset = dataset[11000:12000].shuffle()
 
-batch_size = 15
+batch_size = 64
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
@@ -279,7 +279,6 @@ for _ in range(5):
         loss_all = 0
 
         lf = torch.nn.L1Loss()
-        lf_ = torch.nn.L1Loss(reduction="sum")
         for data in train_loader:
             data = data.to(device)
 
@@ -287,7 +286,7 @@ for _ in range(5):
             loss = lf(model(data), data.y)
 
             loss.backward()
-            loss_all += lf_(model(data), data.y)
+            loss_all += loss * batch_size
 
             optimizer.step()
         return (loss_all / len(train_loader.dataset))
