@@ -235,7 +235,7 @@ class NetGIN(torch.nn.Module):
 
         x = x_6_r
 
-        x = self.set2set(x, data.batch)
+        x = self.set2set(x, data.batch_unc)
 
         x = F.relu(self.fc1(x))
         x = self.fc4(x)
