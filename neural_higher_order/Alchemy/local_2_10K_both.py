@@ -96,10 +96,10 @@ class Alchemy(InMemoryDataset):
             data.batch_con = torch.from_numpy(np.zeros(int(edge_index_0_con[0].max().item()) + 1, dtype=np.int64)).to(torch.long)
             data.batch_unc = torch.from_numpy(np.zeros(int(edge_index_0_unc[0].max().item()) + 1, dtype=np.int64)).to(torch.long)
 
-            data.num_con_0 = torch.tensor(int(edge_index_0_con[0].max().item()) + 1).to(torch.long)
-            data.num_con_1 = torch.tensor(int(edge_index_1_con[1].max().item()) + 1).to(torch.long)
-            data.num_unc_0 = torch.tensor(int(edge_index_0_con[0].max().item()) + 1).to(torch.long)
-            data.num_unc_1 = torch.tensor(int(edge_index_1_unc[1].max().item()) + 1).to(torch.long)
+            data.num_con_0 = int(edge_index_0_con[0].max().item()) + 1
+            data.num_con_1 = int(edge_index_1_con[1].max().item()) + 1
+            data.num_unc_0 = int(edge_index_0_con[0].max().item()) + 1
+            data.num_unc_1 = int(edge_index_1_unc[1].max().item()) + 1
 
             data.y = torch.from_numpy(np.array([targets[i]])).to(torch.float)
 
@@ -128,9 +128,9 @@ class MyData(Data):
         if key in ['edge_index_1_und']:
             return self.num_unc_1
         if key in ['batch_con']:
-            return self.num_con_0
+            return 1
         if key in ['batch_unc']:
-            return self.num_unc_0
+            return 1
         else:
             return 0
 
