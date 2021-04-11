@@ -328,13 +328,7 @@ class NetGIN(torch.nn.Module):
         x = x_6_r
 
         x_con = self.set2set_con(x, data.batch_con.to(torch.long))
-
-
-        print(torch.cat([x_con, x_unc], dim=-1).size())
-        exit()
         x = self.mlp_fuse(torch.cat([x_con, x_unc], dim=-1))
-        print(x.size())
-        exit()
 
         x = F.relu(self.fc1(x))
         x = self.fc4(x)
