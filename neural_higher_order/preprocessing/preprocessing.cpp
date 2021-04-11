@@ -1526,6 +1526,46 @@ matrices;
 
 
 
+vector <pair<vector < vector < uint>>, vector <vector<uint>>>>
+get_all_matrices_unc(string
+name,
+const std::vector<int> &indices
+) {
+GraphDatabase gdb = AuxiliaryMethods::read_graph_txt_file(name);
+gdb.
+erase(gdb
+.
+
+begin()
+
++ 0);
+
+GraphDatabase gdb_new;
+for (
+auto i
+: indices) {
+gdb_new.
+push_back(gdb[int(i)]);
+}
+
+vector <pair<vector < vector < uint>>, vector <vector<uint>>>>
+matrices;
+
+for (
+auto &g
+: gdb_new) {
+matrices.
+push_back(generate_local_sparse_am_con(g, false, false)
+);
+}
+
+return
+matrices;
+}
+
+
+
+
 
 
 vector <vector<vector < uint>>>
@@ -2940,7 +2980,7 @@ PYBIND11_MODULE(preprocessing, m) {
     m.def("get_all_matrices", &get_all_matrices);
     m.def("get_all_matrices_connected", &get_all_matrices_connected);
     m.def("get_all_matrices_con", &get_all_matrices_con);
-    //m.def("get_all_matrices_unc", &get_all_matrices_unc);
+    m.def("get_all_matrices_unc", &get_all_matrices_unc);
 
     m.def("get_all_matrices_wl", &get_all_matrices_wl);
     m.def("get_all_matrices_dwl", &get_all_matrices_dwl);
