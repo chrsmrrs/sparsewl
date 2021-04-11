@@ -77,15 +77,15 @@ class Alchemy(InMemoryDataset):
             edge_index_1_con = torch.tensor(matrices_con[i][0]).t().contiguous()
             edge_index_2_con = torch.tensor(matrices_con[i][1]).t().contiguous()
 
-            edge_index_1_unc = torch.tensor(matrices_unc[i][0]).t().contiguous()
-            edge_index_2_unc = torch.tensor(matrices_unc[i][1]).t().contiguous()
+            #edge_index_1_unc = torch.tensor(matrices_unc[i][0]).t().contiguous()
+            #edge_index_2_unc = torch.tensor(matrices_unc[i][1]).t().contiguous()
 
             data = Data()
             data.edge_index_1_con = edge_index_1_con
             data.edge_index_2_con = edge_index_2_con
 
-            data.edge_index_1_unc = edge_index_1_unc
-            data.edge_index_2_unc = edge_index_2_unc
+            #data.edge_index_1_unc = edge_index_1_unc
+            #data.edge_index_2_unc = edge_index_2_unc
 
             # one_hot = np.eye(83)[node_labels_con[i]]
             # data.x_con = torch.from_numpy(one_hot).to(torch.float)
