@@ -1706,6 +1706,83 @@ matrices;
 
 
 
+vector <pair<vector < vector < uint>>, vector <vector<uint>>>>
+get_all_matrices_con(string
+name,
+const std::vector<int> &indices
+) {
+GraphDatabase gdb = AuxiliaryMethods::read_graph_txt_file(name);
+gdb.
+erase(gdb
+.
+
+begin()
+
++ 0);
+
+GraphDatabase gdb_new;
+for (
+auto i
+: indices) {
+gdb_new.
+push_back(gdb[int(i)]);
+}
+
+vector <pair<vector < vector < uint>>, vector <vector<uint>>>>
+matrices;
+
+for (
+auto &g
+: gdb_new) {
+matrices.
+push_back(generate_local_sparse_am_con(g, false, false)
+);
+}
+
+return
+matrices;
+}
+
+
+
+vector <pair<vector < vector < uint>>, vector <vector<uint>>>>
+get_all_matrices_unc(string
+name,
+const std::vector<int> &indices
+) {
+GraphDatabase gdb = AuxiliaryMethods::read_graph_txt_file(name);
+gdb.
+erase(gdb
+.
+
+begin()
+
++ 0);
+
+GraphDatabase gdb_new;
+for (
+auto i
+: indices) {
+gdb_new.
+push_back(gdb[int(i)]);
+}
+
+vector <pair<vector < vector < uint>>, vector <vector<uint>>>>
+matrices;
+
+for (
+auto &g
+: gdb_new) {
+matrices.
+push_back(generate_local_sparse_am_unc(g, false, false)
+);
+}
+
+return
+matrices;
+}
+
+
 vector <vector<vector < uint>>>
 get_all_matrices_1(string
 name,
