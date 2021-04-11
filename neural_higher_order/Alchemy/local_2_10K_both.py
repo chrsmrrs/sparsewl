@@ -279,6 +279,7 @@ for _ in range(5):
         loss_all = 0
 
         lf = torch.nn.L1Loss()
+        lf_ = torch.nn.L1Loss(reduction="sum")
         for data in train_loader:
             data = data.to(device)
 
@@ -286,7 +287,7 @@ for _ in range(5):
             loss = lf(model(data), data.y)
 
             loss.backward()
-            loss_all += lf(model(data), data.y, reduction="sum")
+            loss_all += lf_(model(data), data.y)
 
             optimizer.step()
         return (loss_all / len(train_loader.dataset))
