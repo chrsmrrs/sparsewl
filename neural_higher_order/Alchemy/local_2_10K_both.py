@@ -98,7 +98,7 @@ class Alchemy(InMemoryDataset):
 
             data.num_con_0 = int(edge_index_0_con[0].max().item()) + 1
             data.num_con_1 = int(edge_index_1_con[1].max().item()) + 1
-            data.num_unc_0 = int(edge_index_0_con[0].max().item()) + 1
+            data.num_unc_0 = int(edge_index_0_unc[0].max().item()) + 1
             data.num_unc_1 = int(edge_index_1_unc[1].max().item()) + 1
 
             data.y = torch.from_numpy(np.array([targets[i]])).to(torch.float)
@@ -291,7 +291,7 @@ for _ in range(5):
             optimizer.step()
         return (loss_all / len(train_loader.dataset))
 
-
+    @torch.no_grad()
     def test(loader):
         model.eval()
         error = torch.zeros([1, 12]).to(device)
