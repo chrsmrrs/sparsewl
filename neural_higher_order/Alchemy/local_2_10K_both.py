@@ -96,7 +96,13 @@ class Alchemy(InMemoryDataset):
             data.y = torch.from_numpy(np.array([targets[i]])).to(torch.float)
 
             print(edge_index_1_con.size())
+            print(edge_index_1_con[0].max())
+            print(edge_index_1_con[1].max())
+
+
             print(edge_index_1_unc.size())
+            print(edge_index_1_unc[0].max())
+            print(edge_index_1_unc[1].max())
             exit()
 
             # data.num_nodes_con_0_0 = matrices_con[i][0]
