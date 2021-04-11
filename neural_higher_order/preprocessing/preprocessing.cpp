@@ -1487,7 +1487,7 @@ matrices;
 
 
 vector <pair<vector < vector < uint>>, vector <vector<uint>>>>
-get_all_matrices_connected(string
+get_all_matrices_con(string
 name,
 const std::vector<int> &indices
 ) {
