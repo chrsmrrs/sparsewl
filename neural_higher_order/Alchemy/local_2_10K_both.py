@@ -150,11 +150,11 @@ class NetGIN(torch.nn.Module):
 
         num_features = 83
 
-        nn1_1_unc = Sequential(Linear(num_features, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
+        self.nn1_1_unc = Sequential(Linear(num_features, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                            torch.nn.BatchNorm1d(dim), ReLU())
         nn1_2_unc = Sequential(Linear(num_features, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                            torch.nn.BatchNorm1d(dim), ReLU())
-        self.conv1_1_unc = GINConv(nn1_1_unc, train_eps=True)
+        self.conv1_1_unc = GINConv(self.nn1_1_unc, train_eps=True)
         self.conv1_2_unc = GINConv(nn1_2_unc, train_eps=True)
         self.mlp_1_unc = Sequential(Linear(2 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                                 torch.nn.BatchNorm1d(dim), ReLU())
