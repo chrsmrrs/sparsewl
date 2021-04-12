@@ -330,11 +330,9 @@ class NetGIN(torch.nn.Module):
         x = x_6_r
 
         x_con = self.set2set_con(x, data.batch_con.to(torch.long))
-        x = x_con
         #x = self.mlp_fuse(torch.cat([x_con, x_unc], dim=-1))
 
-
-        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc1(x_con))
         x = self.fc4(x)
         return x
 
@@ -401,7 +399,7 @@ for _ in range(5):
 
 
     best_val_error = None
-    for epoch in range(1, 201):
+    for epoch in range(1, 501):
         lr = scheduler.optimizer.param_groups[0]['lr']
         loss = train()
         val_error, _ = test(val_loader)
