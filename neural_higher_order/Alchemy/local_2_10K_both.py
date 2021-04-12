@@ -264,7 +264,7 @@ class NetGIN(torch.nn.Module):
         self.mlp_fuse = Sequential(Linear(4 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                                 torch.nn.BatchNorm1d(dim), ReLU())
 
-        self.fc1 = Linear(1 * dim, dim)
+        self.fc1 = Linear(2 * dim, dim)
         self.fc4 = Linear(dim, 12)
 
     def forward(self, data):
