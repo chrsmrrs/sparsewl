@@ -274,27 +274,27 @@ class NetGIN(torch.nn.Module):
         x_2 = F.relu(self.conv1_2_unc(x, data.edge_index_1_unc))
         x_1_r = self.mlp_1_unc(torch.cat([x_1, x_2], dim=-1))
 
-        x_1 = F.relu(self.conv2_1_unc(x_1_r, data.edge_index_0_unc))
-        x_2 = F.relu(self.conv2_2_unc(x_1_r, data.edge_index_1_unc))
-        x_2_r = self.mlp_2_unc(torch.cat([x_1, x_2], dim=-1))
+        # x_1 = F.relu(self.conv2_1_unc(x_1_r, data.edge_index_0_unc))
+        # x_2 = F.relu(self.conv2_2_unc(x_1_r, data.edge_index_1_unc))
+        # x_2_r = self.mlp_2_unc(torch.cat([x_1, x_2], dim=-1))
+        #
+        # x_1 = F.relu(self.conv3_1_unc(x_2_r, data.edge_index_0_unc))
+        # x_2 = F.relu(self.conv3_2_unc(x_2_r, data.edge_index_1_unc))
+        # x_3_r = self.mlp_3_unc(torch.cat([x_1, x_2], dim=-1))
+        #
+        # x_1 = F.relu(self.conv4_1_unc(x_3_r, data.edge_index_0_unc))
+        # x_2 = F.relu(self.conv4_2_unc(x_3_r, data.edge_index_1_unc))
+        # x_4_r = self.mlp_4_unc(torch.cat([x_1, x_2], dim=-1))
+        #
+        # x_1 = F.relu(self.conv5_1_unc(x_4_r, data.edge_index_0_unc))
+        # x_2 = F.relu(self.conv5_2_unc(x_4_r, data.edge_index_1_unc))
+        # x_5_r = self.mlp_5_unc(torch.cat([x_1, x_2], dim=-1))
+        #
+        # x_1 = F.relu(self.conv6_1_unc(x_5_r, data.edge_index_0_unc))
+        # x_2 = F.relu(self.conv6_2_unc(x_5_r, data.edge_index_1_unc))
+        # x_6_r = self.mlp_6_unc(torch.cat([x_1, x_2], dim=-1))
 
-        x_1 = F.relu(self.conv3_1_unc(x_2_r, data.edge_index_0_unc))
-        x_2 = F.relu(self.conv3_2_unc(x_2_r, data.edge_index_1_unc))
-        x_3_r = self.mlp_3_unc(torch.cat([x_1, x_2], dim=-1))
-
-        x_1 = F.relu(self.conv4_1_unc(x_3_r, data.edge_index_0_unc))
-        x_2 = F.relu(self.conv4_2_unc(x_3_r, data.edge_index_1_unc))
-        x_4_r = self.mlp_4_unc(torch.cat([x_1, x_2], dim=-1))
-
-        x_1 = F.relu(self.conv5_1_unc(x_4_r, data.edge_index_0_unc))
-        x_2 = F.relu(self.conv5_2_unc(x_4_r, data.edge_index_1_unc))
-        x_5_r = self.mlp_5_unc(torch.cat([x_1, x_2], dim=-1))
-
-        x_1 = F.relu(self.conv6_1_unc(x_5_r, data.edge_index_0_unc))
-        x_2 = F.relu(self.conv6_2_unc(x_5_r, data.edge_index_1_unc))
-        x_6_r = self.mlp_6_unc(torch.cat([x_1, x_2], dim=-1))
-
-        x = x_6_r
+        x = x_1_r
 
         x_unc = self.set2set_unc(x, data.batch_unc.to(torch.long))
 
