@@ -270,7 +270,7 @@ class NetGIN(torch.nn.Module):
     def forward(self, data):
         x = data.x_unc
 
-        x_1_r = self.nn1_1_con(x)
+        x_1_r = self.nn1_1_unc(x)
 
         #x_1 = F.relu(self.conv1_1_unc(x, data.edge_index_0_unc))
         #x_2 = F.relu(self.conv1_2_unc(x, data.edge_index_1_unc))
