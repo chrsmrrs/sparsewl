@@ -78,7 +78,7 @@ class Alchemy(InMemoryDataset):
             data.edge_index_2 = edge_index_2
             data.edge_index_3 = edge_index_3
 
-            one_hot = np.eye(83)[node_labels[i]]
+            one_hot = np.eye(163)[node_labels[i]]
             data.x = torch.from_numpy(one_hot).to(torch.float)
 
             print(edge_index_1.max(), edge_index_2.max(), edge_index_3.max(), data.x.size())
