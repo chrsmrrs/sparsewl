@@ -113,12 +113,12 @@ class NetGIN(torch.nn.Module):
                            torch.nn.BatchNorm1d(dim), ReLU())
         nn1_2 = Sequential(Linear(num_features, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                            torch.nn.BatchNorm1d(dim), ReLU())
-        nn1_2 = Sequential(Linear(num_features, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
+        nn1_3 = Sequential(Linear(num_features, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                            torch.nn.BatchNorm1d(dim), ReLU())
 
         self.conv1_1 = GINConv(nn1_1, train_eps=True)
         self.conv1_2 = GINConv(nn1_2, train_eps=True)
-        self.conv1_3 = GINConv(nn1_2, train_eps=True)
+        self.conv1_3 = GINConv(nn1_3, train_eps=True)
         self.mlp_1 = Sequential(Linear(3 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                                 torch.nn.BatchNorm1d(dim), ReLU())
 
@@ -126,45 +126,60 @@ class NetGIN(torch.nn.Module):
                            torch.nn.BatchNorm1d(dim), ReLU())
         nn2_2 = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                            torch.nn.BatchNorm1d(dim), ReLU())
+        nn2_3 = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
+                           torch.nn.BatchNorm1d(dim), ReLU())
         self.conv2_1 = GINConv(nn2_1, train_eps=True)
         self.conv2_2 = GINConv(nn2_2, train_eps=True)
-        self.mlp_2 = Sequential(Linear(2 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
+        self.conv2_3 = GINConv(nn2_3, train_eps=True)
+        self.mlp_2 = Sequential(Linear(3 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                                 torch.nn.BatchNorm1d(dim), ReLU())
 
         nn3_1 = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                            torch.nn.BatchNorm1d(dim), ReLU())
         nn3_2 = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                            torch.nn.BatchNorm1d(dim), ReLU())
+        nn3_3 = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
+                           torch.nn.BatchNorm1d(dim), ReLU())
         self.conv3_1 = GINConv(nn3_1, train_eps=True)
         self.conv3_2 = GINConv(nn3_2, train_eps=True)
-        self.mlp_3 = Sequential(Linear(2 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
+        self.conv3_3 = GINConv(nn3_3, train_eps=True)
+        self.mlp_3 = Sequential(Linear(3 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                                 torch.nn.BatchNorm1d(dim), ReLU())
 
         nn4_1 = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                            torch.nn.BatchNorm1d(dim), ReLU())
         nn4_2 = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                            torch.nn.BatchNorm1d(dim), ReLU())
+        nn4_3 = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
+                           torch.nn.BatchNorm1d(dim), ReLU())
         self.conv4_1 = GINConv(nn4_1, train_eps=True)
         self.conv4_2 = GINConv(nn4_2, train_eps=True)
-        self.mlp_4 = Sequential(Linear(2 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
+        self.conv4_3 = GINConv(nn4_3, train_eps=True)
+        self.mlp_4 = Sequential(Linear(3 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                                 torch.nn.BatchNorm1d(dim), ReLU())
 
         nn5_1 = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                            torch.nn.BatchNorm1d(dim), ReLU())
         nn5_2 = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                            torch.nn.BatchNorm1d(dim), ReLU())
+        nn5_3 = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
+                           torch.nn.BatchNorm1d(dim), ReLU())
         self.conv5_1 = GINConv(nn5_1, train_eps=True)
         self.conv5_2 = GINConv(nn5_2, train_eps=True)
-        self.mlp_5 = Sequential(Linear(2 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
+        self.conv5_3 = GINConv(nn5_3, train_eps=True)
+        self.mlp_5 = Sequential(Linear(3 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                                 torch.nn.BatchNorm1d(dim), ReLU())
 
         nn6_1 = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                            torch.nn.BatchNorm1d(dim), ReLU())
         nn6_2 = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                            torch.nn.BatchNorm1d(dim), ReLU())
+        nn6_3 = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
+                           torch.nn.BatchNorm1d(dim), ReLU())
         self.conv6_1 = GINConv(nn6_1, train_eps=True)
         self.conv6_2 = GINConv(nn6_2, train_eps=True)
-        self.mlp_6 = Sequential(Linear(2 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
+        self.conv6_3 = GINConv(nn6_3, train_eps=True)
+        self.mlp_6 = Sequential(Linear(3 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                                 torch.nn.BatchNorm1d(dim), ReLU())
         self.set2set = Set2Set(1 * dim, processing_steps=6)
         self.fc1 = Linear(2 * dim, dim)
@@ -175,27 +190,33 @@ class NetGIN(torch.nn.Module):
 
         x_1 = F.relu(self.conv1_1(x, data.edge_index_1))
         x_2 = F.relu(self.conv1_2(x, data.edge_index_2))
-        x_1_r = self.mlp_1(torch.cat([x_1, x_2], dim=-1))
+        x_3 = F.relu(self.conv1_3(x, data.edge_index_3))
+        x_1_r = self.mlp_1(torch.cat([x_1, x_2, x_3], dim=-1))
 
         x_1 = F.relu(self.conv2_1(x_1_r, data.edge_index_1))
         x_2 = F.relu(self.conv2_2(x_1_r, data.edge_index_2))
-        x_2_r = self.mlp_2(torch.cat([x_1, x_2], dim=-1))
+        x_3 = F.relu(self.conv2_3(x_1_r, data.edge_index_3))
+        x_2_r = self.mlp_2(torch.cat([x_1, x_2, x_3], dim=-1))
 
         x_1 = F.relu(self.conv3_1(x_2_r, data.edge_index_1))
         x_2 = F.relu(self.conv3_2(x_2_r, data.edge_index_2))
-        x_3_r = self.mlp_3(torch.cat([x_1, x_2], dim=-1))
+        x_3 = F.relu(self.conv3_3(x_2_r, data.edge_index_3))
+        x_3_r = self.mlp_3(torch.cat([x_1, x_2, x_3], dim=-1))
 
         x_1 = F.relu(self.conv4_1(x_3_r, data.edge_index_1))
         x_2 = F.relu(self.conv4_2(x_3_r, data.edge_index_2))
-        x_4_r = self.mlp_4(torch.cat([x_1, x_2], dim=-1))
+        x_3 = F.relu(self.conv4_3(x_3_r, data.edge_index_3))
+        x_4_r = self.mlp_4(torch.cat([x_1, x_2, x_3], dim=-1))
 
         x_1 = F.relu(self.conv5_1(x_4_r, data.edge_index_1))
         x_2 = F.relu(self.conv5_2(x_4_r, data.edge_index_2))
-        x_5_r = self.mlp_5(torch.cat([x_1, x_2], dim=-1))
+        x_3 = F.relu(self.conv5_3(x_4_r, data.edge_index_3))
+        x_5_r = self.mlp_5(torch.cat([x_1, x_2, x_3], dim=-1))
 
         x_1 = F.relu(self.conv6_1(x_5_r, data.edge_index_1))
         x_2 = F.relu(self.conv6_2(x_5_r, data.edge_index_2))
-        x_6_r = self.mlp_6(torch.cat([x_1, x_2], dim=-1))
+        x_3 = F.relu(self.conv6_3(x_5_r, data.edge_index_3))
+        x_6_r = self.mlp_6(torch.cat([x_1, x_2, x_3], dim=-1))
 
         x = x_6_r
 
