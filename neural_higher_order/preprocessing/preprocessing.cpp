@@ -171,6 +171,7 @@ generate_local_sparse_am(const Graph &g, const bool use_labels, const bool use_e
 }
 
 pair <vector<vector < uint>>, vector <vector<uint>>>
+
 generate_local_sparse_am_connected(const Graph &g, const bool use_labels, const bool use_edge_labels) {
     size_t num_nodes = g.get_num_nodes();
     // New graph to be generated.
@@ -282,6 +283,7 @@ generate_local_sparse_am_connected(const Graph &g, const bool use_labels, const 
 
 
 pair <vector<vector < uint>>, vector <vector<uint>>>
+
 generate_local_sparse_am_con(const Graph &g, const bool use_labels, const bool use_edge_labels) {
     size_t num_nodes = g.get_num_nodes();
     // New graph to be generated.
@@ -313,7 +315,7 @@ generate_local_sparse_am_con(const Graph &g, const bool use_labels, const bool u
     for (Node i = 0; i < num_nodes; ++i) {
         for (Node j = 0; j < num_nodes; ++j) {
 
-            if (g.has_edge(j,i ) or g.has_edge(i,j) or (i == j)) {
+            if (g.has_edge(j, i) or g.has_edge(i, j) or (i == j)) {
                 two_tuple_graph.add_node();
 
                 // Map each pair to node in two set graph and also inverse.
@@ -393,6 +395,7 @@ generate_local_sparse_am_con(const Graph &g, const bool use_labels, const bool u
 
 
 pair <vector<vector < uint>>, vector <vector<uint>>>
+
 generate_local_sparse_am_unc(const Graph &g, const bool use_labels, const bool use_edge_labels) {
     size_t num_nodes = g.get_num_nodes();
     // New graph to be generated.
@@ -425,38 +428,38 @@ generate_local_sparse_am_unc(const Graph &g, const bool use_labels, const bool u
         for (Node j = 0; j < num_nodes; ++j) {
 
             //if (g.has_edge(j,i ) or g.has_edge(i,j) or (i == j)) {
-                two_tuple_graph.add_node();
+            two_tuple_graph.add_node();
 
-                // Map each pair to node in two set graph and also inverse.
-                node_to_two_tuple.insert({{num_two_tuples, make_tuple(i, j)}});
-                two_tuple_to_node.insert({{make_tuple(i, j), num_two_tuples}});
-                num_two_tuples++;
+            // Map each pair to node in two set graph and also inverse.
+            node_to_two_tuple.insert({{num_two_tuples, make_tuple(i, j)}});
+            two_tuple_to_node.insert({{make_tuple(i, j), num_two_tuples}});
+            num_two_tuples++;
 
-                Label c_i = 1;
-                Label c_j = 2;
-                if (use_labels) {
-                    c_i = AuxiliaryMethods::pairing(labels[i] + 1, c_i);
-                    c_j = AuxiliaryMethods::pairing(labels[j] + 1, c_j);
-                }
-
-                Label c;
-                if (g.has_edge(i, j)) {
-                    if (use_edge_labels) {
-                        auto s = edge_labels.find(make_tuple(i, j));
-                        c = AuxiliaryMethods::pairing(3, s->second);
-                    } else {
-                        c = 3;
-                    }
-                } else if (i == j) {
-                    c = 1;
-                } else {
-                    c = 2;
-                }
-
-                Label new_color = AuxiliaryMethods::pairing(AuxiliaryMethods::pairing(c_i, c_j), c);
-                tuple_labels.push_back(new_color);
+            Label c_i = 1;
+            Label c_j = 2;
+            if (use_labels) {
+                c_i = AuxiliaryMethods::pairing(labels[i] + 1, c_i);
+                c_j = AuxiliaryMethods::pairing(labels[j] + 1, c_j);
             }
+
+            Label c;
+            if (g.has_edge(i, j)) {
+                if (use_edge_labels) {
+                    auto s = edge_labels.find(make_tuple(i, j));
+                    c = AuxiliaryMethods::pairing(3, s->second);
+                } else {
+                    c = 3;
+                }
+            } else if (i == j) {
+                c = 1;
+            } else {
+                c = 2;
+            }
+
+            Label new_color = AuxiliaryMethods::pairing(AuxiliaryMethods::pairing(c_i, c_j), c);
+            tuple_labels.push_back(new_color);
         }
+    }
     //}
 
 
@@ -501,12 +504,6 @@ generate_local_sparse_am_unc(const Graph &g, const bool use_labels, const bool u
 
     return std::make_pair(nonzero_compenents_1, nonzero_compenents_2);
 }
-
-
-
-
-
-
 
 
 vector <vector<uint>> generate_local_sparse_am_1(const Graph &g) {
@@ -1011,6 +1008,162 @@ generate_local_sparse_am_3(const Graph &g, const bool use_labels, const bool use
     return std::make_tuple(nonzero_compenents_1, nonzero_compenents_2, nonzero_compenents_3);
 }
 
+
+tuple <vector<vector < uint>>, vector <vector<uint>>, vector <vector<uint>>>
+
+generate_local_sparse_am_3_connected(const Graph &g, const bool use_labels, const bool use_edge_labels) {
+    size_t num_nodes = g.get_num_nodes();
+    // New graph to be generated.
+    Graph three_tuple_graph(false);
+
+    // Maps node in two set graph to correponding two set.
+    unordered_map <Node, ThreeTuple> node_to_three_tuple;
+    // Inverse of the above map.
+    unordered_map <ThreeTuple, Node> three_tuple_to_node;
+    unordered_map <Edge, uint> edge_type;
+    // Manages vertex ids
+    unordered_map <Edge, uint> vertex_id;
+    unordered_map <Edge, uint> local;
+
+    // Create a node for each two set.
+    Labels labels;
+    Labels tuple_labels;
+    if (use_labels) {
+        labels = g.get_labels();
+    }
+
+    size_t num_three_tuples = 0;
+    for (Node i = 0; i < num_nodes; ++i) {
+        for (Node j = 0; j < num_nodes; ++j) {
+            for (Node k = 0; k < num_nodes; ++k) {
+                if ((g.has_edge(i, j) and g.has_edge(i, k))
+                    or (g.has_edge(j, i) and g.has_edge(j, k))
+                    or (g.has_edge(k, j) and g.has_edge(k, i))
+                    or ((i == j) and (j == k))
+                    or ((i == k) and (g.has_edge(i, j)))
+                    or ((i == j) and (g.has_edge(i, k)))
+                    or ((j == k) and (g.has_edge(i, j)))
+                    or ((j == i) and (g.has_edge(j, k)))
+                    or ((k == i) and (g.has_edge(k, j)))
+                    or ((k == j) and (g.has_edge(k, i)))
+                        ) {
+
+
+                    three_tuple_graph.add_node();
+
+                    node_to_three_tuple.insert({{num_three_tuples, make_tuple(i, j, k)}});
+                    three_tuple_to_node.insert({{make_tuple(i, j, k), num_three_tuples}});
+                    num_three_tuples++;
+
+                    Label c_i = 1;
+                    Label c_j = 2;
+                    Label c_k = 3;
+
+                    if (use_labels) {
+                        c_i = AuxiliaryMethods::pairing(labels[i] + 1, c_i);
+                        c_j = AuxiliaryMethods::pairing(labels[j] + 1, c_j);
+                        c_k = AuxiliaryMethods::pairing(labels[k] + 1, c_k);
+                    }
+
+                    Label a, b, c;
+                    if (g.has_edge(i, j)) {
+                        a = 1;
+                    } else if (not g.has_edge(i, j)) {
+                        a = 2;
+                    } else {
+                        a = 3;
+                    }
+
+                    if (g.has_edge(i, k)) {
+                        b = 1;
+                    } else if (not g.has_edge(i, k)) {
+                        b = 2;
+                    } else {
+                        b = 3;
+                    }
+
+                    if (g.has_edge(j, k)) {
+                        c = 1;
+                    } else if (not g.has_edge(j, k)) {
+                        c = 2;
+                    } else {
+                        c = 3;
+                    }
+
+                    Label new_color_0 = AuxiliaryMethods::pairing(AuxiliaryMethods::pairing(a, b), c);
+                    Label new_color_1 = AuxiliaryMethods::pairing(AuxiliaryMethods::pairing(c_i, c_j), c_k);
+                    Label new_color = AuxiliaryMethods::pairing(new_color_0, new_color_1);
+                    tuple_labels.push_back(new_color);
+                }
+            }
+        }
+    }
+
+    vector <vector<uint >> nonzero_compenents_1;
+    vector <vector<uint >> nonzero_compenents_2;
+    vector <vector<uint >> nonzero_compenents_3;
+
+    for (Node i = 0; i < num_three_tuples; ++i) {
+        // Get nodes of original graph corresponding to two tuple i.
+        ThreeTuple p = node_to_three_tuple.find(i)->second;
+        Node v = std::get<0>(p);
+        Node w = std::get<1>(p);
+        Node u = std::get<2>(p);
+
+        // Exchange first node.
+        Nodes v_neighbors = g.get_neighbours(v);
+        for (const auto &v_n: v_neighbors) {
+            unordered_map<ThreeTuple, Node>::const_iterator t;
+            t = three_tuple_to_node.find(make_tuple(v_n, w, u));
+
+            if (t != three_tuple_to_node.end()) {
+
+                three_tuple_graph.add_edge(i, t->second);
+                edge_type.insert({{make_tuple(i, t->second), 1}});
+                vertex_id.insert({{make_tuple(i, t->second), v_n}});
+                local.insert({{make_tuple(i, t->second), 1}});
+
+                nonzero_compenents_1.push_back({{i, t->second}});
+            }
+        }
+
+        // Exchange second node.
+        Nodes w_neighbors = g.get_neighbours(w);
+        for (const auto &w_n: w_neighbors) {
+            unordered_map<ThreeTuple, Node>::const_iterator t;
+            t = three_tuple_to_node.find(make_tuple(v, w_n, u));
+
+            if (t != three_tuple_to_node.end()) {
+
+                three_tuple_graph.add_edge(i, t->second);
+                edge_type.insert({{make_tuple(i, t->second), 2}});
+                vertex_id.insert({{make_tuple(i, t->second), w_n}});
+                local.insert({{make_tuple(i, t->second), 1}});
+
+                nonzero_compenents_2.push_back({{i, t->second}});
+            }
+        }
+
+        // Exchange third node.
+        Nodes u_neighbors = g.get_neighbours(u);
+        for (const auto &u_n: u_neighbors) {
+            unordered_map<ThreeTuple, Node>::const_iterator t;
+            t = three_tuple_to_node.find(make_tuple(v, w, u_n));
+
+            if (t != three_tuple_to_node.end()) {
+                three_tuple_graph.add_edge(i, t->second);
+                edge_type.insert({{make_tuple(i, t->second), 3}});
+                vertex_id.insert({{make_tuple(i, t->second), u_n}});
+                local.insert({{make_tuple(i, t->second), 1}});
+
+                nonzero_compenents_3.push_back({{i, t->second}});
+            }
+        }
+    }
+
+    return std::make_tuple(nonzero_compenents_1, nonzero_compenents_2, nonzero_compenents_3);
+}
+
 pair <vector<int>, vector<int>> get_edge_labels(const Graph &g, const bool use_labels, const bool use_edge_labels) {
     size_t num_nodes = g.get_num_nodes();
     // New graph to be generated.
@@ -1366,6 +1519,17 @@ vector<unsigned long> get_node_labels_3(const Graph &g, const bool use_labels, c
     for (Node i = 0; i < num_nodes; ++i) {
         for (Node j = 0; j < num_nodes; ++j) {
             for (Node k = 0; k < num_nodes; ++k) {
+                            if ((g.has_edge(i, j) and g.has_edge(i, k))
+                    or (g.has_edge(j, i) and g.has_edge(j, k))
+                    or (g.has_edge(k, j) and g.has_edge(k, i))
+                    or ((i == j) and (j == k))
+                    or ((i == k) and (g.has_edge(i, j)))
+                    or ((i == j) and (g.has_edge(i, k)))
+                    or ((j == k) and (g.has_edge(i, j)))
+                    or ((j == i) and (g.has_edge(j, k)))
+                    or ((k == i) and (g.has_edge(k, j)))
+                    or ((k == j) and (g.has_edge(k, i)))
+                        ) {
 
                 Label c_i = 1;
                 Label c_j = 2;
@@ -1408,7 +1572,7 @@ vector<unsigned long> get_node_labels_3(const Graph &g, const bool use_labels, c
                 tuple_labels.push_back(new_color);
             }
         }
-    }
+    }}
     return tuple_labels;
 }
 
@@ -1746,6 +1910,47 @@ auto &g
 : gdb_new) {
 matrices.
 push_back(generate_local_sparse_am_3(g, true, false)
+);
+i++;
+}
+
+return
+matrices;
+}
+
+
+
+vector <tuple<vector < vector < uint>>, vector <vector<uint>>, vector <vector<uint>>>>
+get_all_matrices_3_connected(string
+name,
+const std::vector<int> &indices
+) {
+GraphDatabase gdb = AuxiliaryMethods::read_graph_txt_file(name);
+gdb.
+erase(gdb
+.
+
+begin()
+
++ 0);
+
+GraphDatabase gdb_new;
+for (
+auto i
+: indices) {
+gdb_new.
+push_back(gdb[int(i)]);
+}
+
+vector <tuple<vector < vector < uint>>, vector <vector<uint>>, vector <vector<uint>>>>
+matrices;
+
+uint i = 0;
+for (
+auto &g
+: gdb_new) {
+matrices.
+push_back(generate_local_sparse_am_3_connected(g, true, false)
 );
 i++;
 }
@@ -2990,6 +3195,7 @@ PYBIND11_MODULE(preprocessing, m) {
     m.def("get_all_matrices_dwle", &get_all_matrices_dwle);
     m.def("get_all_matrices_1", &get_all_matrices_1);
     m.def("get_all_matrices_3", &get_all_matrices_3);
+    m.def("get_all_matrices_3_connected", &get_all_matrices_3_connected);
     m.def("get_all_node_labels", &get_all_node_labels);
     m.def("get_all_node_labels_1", &get_all_node_labels_1);
     m.def("get_all_edge_labels_1", &get_all_edge_labels_1);
