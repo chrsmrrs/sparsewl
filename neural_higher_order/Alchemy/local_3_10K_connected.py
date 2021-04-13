@@ -63,7 +63,6 @@ class Alchemy(InMemoryDataset):
         targets.extend(tmp_3)
 
         node_labels = pre.get_all_node_labels_allchem(True, True, indices_train, indices_val, indices_test)
-        exit()
 
         matrices = pre.get_all_matrices_3_connected("alchemy_full", indices_train)
         matrices.extend(pre.get_all_matrices_3_connected("alchemy_full", indices_val))
@@ -78,7 +77,6 @@ class Alchemy(InMemoryDataset):
             data.edge_index_1 = edge_index_1
             data.edge_index_2 = edge_index_2
             data.edge_index_3 = edge_index_3
-
 
 
             one_hot = np.eye(83)[node_labels[i]]
@@ -116,9 +114,13 @@ class NetGIN(torch.nn.Module):
                            torch.nn.BatchNorm1d(dim), ReLU())
         nn1_2 = Sequential(Linear(num_features, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                            torch.nn.BatchNorm1d(dim), ReLU())
+        nn1_2 = Sequential(Linear(num_features, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
+                           torch.nn.BatchNorm1d(dim), ReLU())
+
         self.conv1_1 = GINConv(nn1_1, train_eps=True)
         self.conv1_2 = GINConv(nn1_2, train_eps=True)
-        self.mlp_1 = Sequential(Linear(2 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
+        self.conv1_3 = GINConv(nn1_2, train_eps=True)
+        self.mlp_1 = Sequential(Linear(3 * dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
                                 torch.nn.BatchNorm1d(dim), ReLU())
 
         nn2_1 = Sequential(Linear(dim, dim), torch.nn.BatchNorm1d(dim), ReLU(), Linear(dim, dim),
