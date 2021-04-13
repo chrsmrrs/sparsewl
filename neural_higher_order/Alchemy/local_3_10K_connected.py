@@ -246,7 +246,7 @@ train_dataset = dataset[0:10000].shuffle()
 val_dataset = dataset[10000:11000].shuffle()
 test_dataset = dataset[11000:12000].shuffle()
 
-batch_size = 1
+batch_size = 15
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
@@ -255,7 +255,7 @@ results = []
 results_log = []
 for _ in range(5):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = NetGIN(32).to(device)
+    model = NetGIN(64).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
                                                            factor=0.5, patience=5,
