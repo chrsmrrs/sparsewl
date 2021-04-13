@@ -189,9 +189,10 @@ class NetGIN(torch.nn.Module):
         x = data.x
 
         print(x.size(), data.edge_index_1[0].max(), data.edge_index_1[1].max())
-        exit()
+
 
         x_1 = F.relu(self.conv1_1(x, data.edge_index_1))
+        exit()
         x_2 = F.relu(self.conv1_2(x, data.edge_index_2))
         x_3 = F.relu(self.conv1_3(x, data.edge_index_3))
         x_1_r = self.mlp_1(torch.cat([x_1, x_2, x_3], dim=-1))
