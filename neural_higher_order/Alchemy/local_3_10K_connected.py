@@ -62,7 +62,7 @@ class Alchemy(InMemoryDataset):
         targets.extend(tmp_2)
         targets.extend(tmp_3)
 
-        node_labels = pre.get_all_node_labels_allchem(True, True, indices_train, indices_val, indices_test)
+        node_labels = pre.get_all_node_labels_allchem_3(True, True, indices_train, indices_val, indices_test)
 
         matrices = pre.get_all_matrices_3_connected("alchemy_full", indices_train)
         matrices.extend(pre.get_all_matrices_3_connected("alchemy_full", indices_val))
@@ -80,6 +80,9 @@ class Alchemy(InMemoryDataset):
 
             one_hot = np.eye(83)[node_labels[i]]
             data.x = torch.from_numpy(one_hot).to(torch.float)
+
+            print(edge_index_1.max(), edge_index_2.max(), edge_index_3.max(), data.x.size())
+
             data.y = data.y = torch.from_numpy(np.array([targets[i]])).to(torch.float)
 
             data_list.append(data)
