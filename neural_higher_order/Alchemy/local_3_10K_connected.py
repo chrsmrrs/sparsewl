@@ -191,9 +191,6 @@ class NetGIN(torch.nn.Module):
     def forward(self, data):
         x = data.x
 
-        print(x.size(), data.edge_index_1[0].max(), data.edge_index_1[1].max())
-
-
         x_1 = F.relu(self.conv1_1(x, data.edge_index_1))
 
         x_2 = F.relu(self.conv1_2(x, data.edge_index_2))
@@ -227,8 +224,7 @@ class NetGIN(torch.nn.Module):
 
         x = x_6_r
 
-        print(data.batch.type())
-        exit()
+
 
         x = self.set2set(x, data.batch)
 
