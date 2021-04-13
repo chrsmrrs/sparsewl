@@ -224,8 +224,6 @@ class NetGIN(torch.nn.Module):
 
         x = x_6_r
 
-
-
         x = self.set2set(x, data.batch)
 
         x = F.relu(self.fc1(x))
@@ -246,7 +244,7 @@ train_dataset = dataset[0:10000].shuffle()
 val_dataset = dataset[10000:11000].shuffle()
 test_dataset = dataset[11000:12000].shuffle()
 
-batch_size = 15
+batch_size = 5
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
