@@ -253,7 +253,7 @@ results = []
 results_log = []
 for _ in range(5):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = NetGIN(15).to(device)
+    model = NetGIN(10).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
                                                            factor=0.5, patience=5,
@@ -276,7 +276,7 @@ for _ in range(5):
             optimizer.step()
         return (loss_all / len(train_loader.dataset))
 
-    
+
     def test(loader):
         model.eval()
         error = torch.zeros([1, 12]).to(device)
