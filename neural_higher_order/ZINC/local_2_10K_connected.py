@@ -59,15 +59,15 @@ class ZINC(InMemoryDataset):
         dp.get_dataset("ZINC_train")
         dp.get_dataset("ZINC_test")
         dp.get_dataset("ZINC_val")
-        node_labels = pre.get_all_node_labels_ZINC(True, True, indices_train, indices_val, indices_test)
+        node_labels = pre.get_all_node_labels_ZINC_con(True, True, indices_train, indices_val, indices_test)
 
         targets = pre.read_targets("ZINC_train", indices_train)
         targets.extend(pre.read_targets("ZINC_val", indices_val))
         targets.extend(pre.read_targets("ZINC_test", indices_test))
 
-        matrices = pre.get_all_matrices("ZINC_train", indices_train)
-        matrices.extend(pre.get_all_matrices("ZINC_val", indices_val))
-        matrices.extend(pre.get_all_matrices("ZINC_test", indices_test))
+        matrices = pre.get_all_matrices_con("ZINC_train", indices_train)
+        matrices.extend(pre.get_all_matrices_con("ZINC_val", indices_val))
+        matrices.extend(pre.get_all_matrices_con("ZINC_test", indices_test))
 
         for i, m in enumerate(matrices):
             edge_index_1 = torch.tensor(matrices[i][0]).t().contiguous()
@@ -192,7 +192,7 @@ for _ in range(5):
     model = NetGIN(256).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
-                                                           factor=0.5, patience=5,
+                                                           factor=0.5, patience=15,
                                                            min_lr=0.0000001)
 
 
