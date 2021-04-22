@@ -1519,7 +1519,7 @@ vector<unsigned long> get_node_labels_3(const Graph &g, const bool use_labels, c
     for (Node i = 0; i < num_nodes; ++i) {
         for (Node j = 0; j < num_nodes; ++j) {
             for (Node k = 0; k < num_nodes; ++k) {
-                            if ((g.has_edge(i, j) and g.has_edge(i, k))
+                if ((g.has_edge(i, j) and g.has_edge(i, k))
                     or (g.has_edge(j, i) and g.has_edge(j, k))
                     or (g.has_edge(k, j) and g.has_edge(k, i))
                     or ((i == j) and (j == k))

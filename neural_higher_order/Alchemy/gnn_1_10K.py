@@ -185,7 +185,7 @@ results = []
 results_log = []
 for _ in range(5):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = NetGINE(64).to(device)
+    model = NetGINE(128).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
                                                            factor=0.5, patience=5,
