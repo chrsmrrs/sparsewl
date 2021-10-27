@@ -3306,7 +3306,7 @@ PYBIND11_MODULE(preprocessing, m) {
     m.def("get_all_node_labels_ZINC", &get_all_node_labels_ZINC);
     m.def("get_all_node_labels_ZINC_connected", &get_all_node_labels_ZINC_connected);
     m.def("get_all_node_labels_ZINC_1", &get_all_node_labels_ZINC_1);
-    m.def("get_all_node_labels_alchem_1", &get_all_node_labels_alchem_1);
+
     m.def("get_all_node_labels_allchem", &get_all_node_labels_allchem);
 
     m.def("get_all_node_labels_allchem_con", &get_all_node_labels_allchem_con);
@@ -3317,6 +3317,8 @@ PYBIND11_MODULE(preprocessing, m) {
     m.def("get_all_node_labels_ZINC_3", &get_all_node_labels_ZINC_3);
     m.def("get_all_node_labels_allchem_3", &get_all_node_labels_allchem_3);
     m.def("get_all_edge_labels_ZINC_1", &get_all_edge_labels_ZINC_1);
+
+    m.def("get_all_node_labels_alchem_1", &get_all_node_labels_alchem_1);
     m.def("get_all_edge_labels_alchem_1", &get_all_edge_labels_alchem_1);
     m.def("get_all_edge_labelslg_ZINC_1", &get_all_edge_labels_ZINC_1);
     m.def("get_all_attributes", &get_all_attributes);
