@@ -112,6 +112,10 @@ class GIN0(torch.nn.Module):
         return self.__class__.__name__
 
 
+
+
+
+
 class GINE0Conv(MessagePassing):
     def __init__(self, edge_dim, dim_init, dim):
         super(GINE0Conv, self).__init__(aggr="add")
