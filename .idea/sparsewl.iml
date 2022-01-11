@@ -2,7 +2,7 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Python" name="Python facet">
-      <configuration sdkName="" />
+      <configuration sdkName="Python 3.8 (gc)" />
     </facet>
   </component>
   <component name="NewModuleRootManager">
@@ -12,5 +12,6 @@
     <orderEntry type="module" module-name="tgnn" />
     <orderEntry type="module" module-name="mipGNN" />
     <orderEntry type="module" module-name="SeqGN" />
+    <orderEntry type="library" name="Python 3.8 (gc) interpreter library" level="application" />
   </component>
 </module>
