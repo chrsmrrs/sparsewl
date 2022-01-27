@@ -11,7 +11,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="tgnn" />
     <orderEntry type="module" module-name="mipGNN" />
-    <orderEntry type="module" module-name="SeqGN" />
+    <orderEntry type="module" module-name="SpecNets" />
     <orderEntry type="library" name="Python 3.8 (gc) interpreter library" level="application" />
   </component>
 </module>
